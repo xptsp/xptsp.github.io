@@ -32,17 +32,17 @@
 <meta name="generator" content="Jekyll v4.3.4" />
 <meta property="og:title" content="About" />
 <meta property="og:locale" content="en" />
-<meta name="description" content="Add Markdown syntax content to file _tabs/about.md and it will show up on this page." />
-<meta property="og:description" content="Add Markdown syntax content to file _tabs/about.md and it will show up on this page." />
+<meta name="description" content="I decided it is time to share my personal Linux experience regarding Ubuntu ISO customization. I’m doing so, hoping that it will be helpful to people looking to set up Ubuntu on their machines, especially rookies… So this blog seeks to detail ways to customize Ubuntu (and maybe Debian) installs easily, as well as describe how my home networking is set up…." />
+<meta property="og:description" content="I decided it is time to share my personal Linux experience regarding Ubuntu ISO customization. I’m doing so, hoping that it will be helpful to people looking to set up Ubuntu on their machines, especially rookies… So this blog seeks to detail ways to customize Ubuntu (and maybe Debian) installs easily, as well as describe how my home networking is set up…." />
 <link rel="canonical" href="http://0.0.0.0:4000/about/" />
 <meta property="og:url" content="http://0.0.0.0:4000/about/" />
 <meta property="og:site_name" content="Doug’s Blog" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2024-12-04T11:43:18-06:00" />
+<meta property="article:published_time" content="2024-12-04T14:36:18-06:00" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="About" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","dateModified":"2024-12-04T11:43:18-06:00","datePublished":"2024-12-04T11:43:18-06:00","description":"Add Markdown syntax content to file _tabs/about.md and it will show up on this page.","headline":"About","name":"Douglas Orend","sameAs":["https://github.com/xptsp"],"url":"http://0.0.0.0:4000/about/"}</script>
+{"@context":"https://schema.org","@type":"WebSite","dateModified":"2024-12-04T14:36:18-06:00","datePublished":"2024-12-04T14:36:18-06:00","description":"I decided it is time to share my personal Linux experience regarding Ubuntu ISO customization. I’m doing so, hoping that it will be helpful to people looking to set up Ubuntu on their machines, especially rookies… So this blog seeks to detail ways to customize Ubuntu (and maybe Debian) installs easily, as well as describe how my home networking is set up….","headline":"About","name":"Douglas Orend","sameAs":["https://github.com/xptsp"],"url":"http://0.0.0.0:4000/about/"}</script>
 <!-- End Jekyll SEO tag -->
 
 
@@ -486,6 +486,27 @@
   
 
   
+    
+    
+
+    
+      
+        
+        
+      
+
+      
+      
+
+      
+      
+      
+
+      
+    
+
+    
+  
 
   
   
@@ -513,9 +534,27 @@
       About
     </h1>
     <div class="content">
-      <blockquote class="prompt-tip">
-  <p>Add Markdown syntax content to file <code class="language-plaintext filepath highlighter-rouge">_tabs/about.md</code> and it will show up on this page.</p>
-</blockquote>
+      <p>I decided it is time to share my personal Linux experience regarding Ubuntu ISO customization.  I’m doing so, hoping that it will be helpful to people looking to set up Ubuntu on their machines, especially rookies…  So this blog seeks to detail ways to customize Ubuntu (and maybe Debian) installs easily, as well as describe how my home networking is set up….</p>
+
+<h3 id="the-story-so-far"><span class="me-2">The Story so far….</span><a href="#the-story-so-far" class="anchor text-muted"><i class="fas fa-hashtag"></i></a></h3>
+<p>Sometime around 2019, I needed to replace Windows 7 on my desktop machine, since updates would not be forthcoming after January 2020.  I had tried Windows 8 as well as Windows 10, and (well, quite frankly) I hate them all.  Windows 8 wouldn’t install properly on my machine, something about unsupported drivers.  I primarily hate Windows 10 mostly because I have no control over the updating process.  I need things to remain “stable”, not change simply because Microsoft decides features that I need and rely on are no longer part of the OS.  Media Center was the best example of this (not that I have cable TV anymore…), however, if I look longer, I’m sure I can find more examples to give…</p>
+
+<p>I have some experience using a <a href="https://www.raspberrypi.com/products/raspberry-pi-3-model-b/">Raspberry Pi 3</a>, trying to use it for various household projects.  It never seemed to be enough of a machine to do the tasks I was giving it, but I mastered the Linux command-line on it.  I felt like I was ready to dive fully into the world of Linux on my personal PC….  (The Raspberry Pi 3 isn’t PC-enough to try using to as a main computer, IMHO)</p>
+
+<p>So I first tried <a href="https://ubuntu.com">Ubuntu 18.04</a>, and found that I didn’t like it.  Too foreign for my tastes at the time….  I tried <a href="https://xubuntu.org">XUbuntu 18.04</a>, and found that with a few modifications, I could make it get it pretty close to looking like Windows 7.  This particular point was important to me, because my wife is not technologically inclined and she hates change…  But, little detail, some software I wanted on my system wasn’t compatible yet with 18.04 (grumps)….  So XUbuntu 16.04 it was…</p>
+
+<p>Now, I like to try things out.  Experiment, if you will.  Yep, I sometimes <strong>break</strong> my software install, so I needed a way to reinstall everything as fast as possible <strong>OR</strong> restore things to a working state, mostly because who in their right mind wants to spend time reinstalling and/or fixing their OS?  I find I do this on a regular basis, so finding some way to do this quickly was critical to me.</p>
+
+<p>I found several articles of interest:</p>
+<ul>
+  <li><a href="https://nathanpfry.com/how-to-customize-an-ubuntu-installation-disc/">How to Customize an Ubuntu Installation Disc – The Right Way</a></li>
+  <li><a href="https://help.ubuntu.com/community/LiveCDCustomization">LiveCDCustomization - Ubuntu Documentation: Community Wiki</a></li>
+  <li><a href="https://mvallim.github.io/live-custom-ubuntu-from-scratch/">How to create a custom Ubuntu live from scratch</a></li>
+</ul>
+
+<p>The first two articles inspired the development of my <a href="https://github.com/xptsp/modify_ubuntu_kit">Modify Ubuntu Kit</a> (MUK for short).  This toolkit allows me to customize the Ubuntu-flavored ISO that I could download any which way I pretty much wanted.</p>
+
+<p>The last article revolves around bootstrapping a complete OS from scratch.  This actually helped me create a Ubuntu 24.04 ISO that will install on my machines, since the official Ubuntu 24.04 ISO crashes upon attempting to install it….  Not helpful, doncha say?  Plus, it seems <a href="https://canonical.com">Canonical</a> altered the way the ISO format stores the squashfs files, so MUK no longer works easily on it….</p>
 
     </div>
   
