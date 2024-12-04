@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>Doug's Blog</title>
   <subtitle>Helpful information about customizing Ubuntu ISOs, Windows installs, and other things</subtitle>
-  <updated>2024-12-04T11:10:55-06:00</updated>
+  <updated>2024-12-04T11:36:00-06:00</updated>
   <author>
     <name>Douglas Orend</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -24,7 +24,7 @@
     <link href="http://0.0.0.0:4000/posts/xptsp-black/" rel="alternate" type="text/html" title="XPtsp Black Theme" />
     <published>2024-11-27T08:39:00-06:00</published>
   
-    <updated>2024-11-27T08:39:00-06:00</updated>
+    <updated>2024-12-04T11:11:54-06:00</updated>
   
     <id>http://0.0.0.0:4000/posts/xptsp-black/</id>
     <content type="text/html" src="http://0.0.0.0:4000/posts/xptsp-black/" />
@@ -50,7 +50,7 @@
     <link href="http://0.0.0.0:4000/posts/xptsp-blue/" rel="alternate" type="text/html" title="XPtsp Blue Theme" />
     <published>2024-11-26T08:39:00-06:00</published>
   
-    <updated>2024-11-26T08:39:00-06:00</updated>
+    <updated>2024-12-04T11:11:54-06:00</updated>
   
     <id>http://0.0.0.0:4000/posts/xptsp-blue/</id>
     <content type="text/html" src="http://0.0.0.0:4000/posts/xptsp-blue/" />
@@ -76,7 +76,7 @@
     <link href="http://0.0.0.0:4000/posts/xptsp-green/" rel="alternate" type="text/html" title="XPtsp Green Theme" />
     <published>2024-11-25T08:39:00-06:00</published>
   
-    <updated>2024-11-25T08:39:00-06:00</updated>
+    <updated>2024-12-04T11:11:54-06:00</updated>
   
     <id>http://0.0.0.0:4000/posts/xptsp-green/</id>
     <content type="text/html" src="http://0.0.0.0:4000/posts/xptsp-green/" />
@@ -102,7 +102,7 @@
     <link href="http://0.0.0.0:4000/posts/xptsp-neonblue/" rel="alternate" type="text/html" title="XPtsp NeonBlue Theme" />
     <published>2024-11-24T08:39:00-06:00</published>
   
-    <updated>2024-11-24T08:39:00-06:00</updated>
+    <updated>2024-12-04T11:11:54-06:00</updated>
   
     <id>http://0.0.0.0:4000/posts/xptsp-neonblue/</id>
     <content type="text/html" src="http://0.0.0.0:4000/posts/xptsp-neonblue/" />
@@ -128,7 +128,7 @@
     <link href="http://0.0.0.0:4000/posts/xptsp-purple/" rel="alternate" type="text/html" title="XPtsp Purple Theme" />
     <published>2024-11-23T08:39:00-06:00</published>
   
-    <updated>2024-11-23T08:39:00-06:00</updated>
+    <updated>2024-12-04T11:11:54-06:00</updated>
   
     <id>http://0.0.0.0:4000/posts/xptsp-purple/</id>
     <content type="text/html" src="http://0.0.0.0:4000/posts/xptsp-purple/" />
