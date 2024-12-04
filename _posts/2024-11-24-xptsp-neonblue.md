@@ -2,7 +2,7 @@
 title: XPtsp NeonBlue Theme
 description: The NeonBlue theme for XP Theme Source Patcher (XPtsp) 
 date: 2024-11-24 08:39:00 -0600
-categories: [XPtsp]
+categories: [XPtsp, XPtsp Themes]
 tags: [XPtsp]
 image:
   path: https://github.com/xptsp/XPtsp_Themes/blob/main/NeonBlue/Gallery/Pic07.jpg?raw=true

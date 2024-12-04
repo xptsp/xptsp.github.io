@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>Doug's Blog</title>
   <subtitle>Helpful information about customizing Ubuntu ISOs, Windows installs, and other things</subtitle>
-  <updated>2024-12-04T11:03:47-06:00</updated>
+  <updated>2024-12-04T11:10:55-06:00</updated>
   <author>
     <name>Douglas Orend</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -36,6 +36,8 @@
     
     <category term="XPtsp" />
     
+    <category term="XPtsp Themes" />
+    
   
 
   <summary>The Black theme for XP Theme Source Patcher (XPtsp)</summary>
@@ -59,6 +61,8 @@
   
     
     <category term="XPtsp" />
+    
+    <category term="XPtsp Themes" />
     
   
 
@@ -84,6 +88,8 @@
     
     <category term="XPtsp" />
     
+    <category term="XPtsp Themes" />
+    
   
 
   <summary>The Green theme for XP Theme Source Patcher (XPtsp)</summary>
@@ -108,6 +114,8 @@
     
     <category term="XPtsp" />
     
+    <category term="XPtsp Themes" />
+    
   
 
   <summary>The NeonBlue theme for XP Theme Source Patcher (XPtsp)</summary>
@@ -131,6 +139,8 @@
   
     
     <category term="XPtsp" />
+    
+    <category term="XPtsp Themes" />
     
   
 

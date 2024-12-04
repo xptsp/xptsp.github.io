@@ -2,7 +2,7 @@
 title: XPtsp Blue Theme
 description: The Blue theme for XP Theme Source Patcher (XPtsp) 
 date: 2024-11-26 08:39:00 -0600
-categories: [XPtsp]
+categories: [XPtsp, XPtsp Themes]
 tags: [XPtsp]
 image:
   path: https://github.com/xptsp/XPtsp_Themes/blob/main/Blue/Gallery/Pic07.jpg?raw=true

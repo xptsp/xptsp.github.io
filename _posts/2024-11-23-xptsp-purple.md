@@ -2,7 +2,7 @@
 title: XPtsp Purple Theme
 description: The Purple theme for XP Theme Source Patcher (XPtsp) 
 date: 2024-11-23 08:39:00 -0600
-categories: [XPtsp]
+categories: [XPtsp, XPtsp Themes]
 tags: [XPtsp]
 image:
   path: https://github.com/xptsp/XPtsp_Themes/blob/main/Purple/Gallery/Pic07.jpg?raw=true
