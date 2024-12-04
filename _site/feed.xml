@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>Doug's Blog</title>
   <subtitle>Helpful information about customizing Ubuntu ISOs, Windows installs, and other things</subtitle>
-  <updated>2024-12-04T14:36:18-06:00</updated>
+  <updated>2024-12-04T16:25:17-06:00</updated>
   <author>
     <name>Douglas Orend</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -20,8 +20,8 @@
 
   
   <entry>
-    <title>XPtsp GUI</title>
-    <link href="http://0.0.0.0:4000/posts/xptsp-gui/" rel="alternate" type="text/html" title="XPtsp GUI" />
+    <title>XP Theme Source Patcher GUI</title>
+    <link href="http://0.0.0.0:4000/posts/xptsp-gui/" rel="alternate" type="text/html" title="XP Theme Source Patcher GUI" />
     <published>2024-11-28T08:39:00-06:00</published>
   
     <updated>2024-11-28T08:39:00-06:00</updated>
