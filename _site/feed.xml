@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>Doug's Blog</title>
   <subtitle>Helpful information about customizing Ubuntu ISOs, Windows installs, and other things</subtitle>
-  <updated>2024-12-04T19:40:43-06:00</updated>
+  <updated>2024-12-05T07:31:19-06:00</updated>
   <author>
     <name>Douglas Orend</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -17,6 +17,78 @@
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
+
+  
+  <entry>
+    <title>LBS Bootscreens A-G</title>
+    <link href="http://0.0.0.0:4000/posts/bootscreens-a-g/" rel="alternate" type="text/html" title="LBS Bootscreens A-G" />
+    <published>2024-12-02T08:39:00-06:00</published>
+  
+    <updated>2024-12-02T08:39:00-06:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/bootscreens-a-g/</id>
+    <content type="text/html" src="http://0.0.0.0:4000/posts/bootscreens-a-g/" />
+    <author>
+      <name>Douglas Orend</name>
+    </author>
+
+  
+    
+    <category term="LBS" />
+    
+  
+
+  <summary>List of Live Bootscreen Patcher downloadables</summary>
+
+  </entry>
+
+  
+  <entry>
+    <title>LBS Bootscreens H-M</title>
+    <link href="http://0.0.0.0:4000/posts/bootscreens-h-m/" rel="alternate" type="text/html" title="LBS Bootscreens H-M" />
+    <published>2024-12-01T08:39:00-06:00</published>
+  
+    <updated>2024-12-01T08:39:00-06:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/bootscreens-h-m/</id>
+    <content type="text/html" src="http://0.0.0.0:4000/posts/bootscreens-h-m/" />
+    <author>
+      <name>Douglas Orend</name>
+    </author>
+
+  
+    
+    <category term="LBS" />
+    
+  
+
+  <summary>List of Live Bootscreen Patcher downloadables</summary>
+
+  </entry>
+
+  
+  <entry>
+    <title>LBS Bootscreens S-Z</title>
+    <link href="http://0.0.0.0:4000/posts/bootscreens-s-z/" rel="alternate" type="text/html" title="LBS Bootscreens S-Z" />
+    <published>2024-11-30T08:39:00-06:00</published>
+  
+    <updated>2024-11-30T08:39:00-06:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/bootscreens-s-z/</id>
+    <content type="text/html" src="http://0.0.0.0:4000/posts/bootscreens-s-z/" />
+    <author>
+      <name>Douglas Orend</name>
+    </author>
+
+  
+    
+    <category term="LBS" />
+    
+  
+
+  <summary>List of Live Bootscreen Patcher downloadables</summary>
+
+  </entry>
 
   
   <entry>
@@ -65,84 +137,6 @@
   
 
   <summary>XP Theme Source Patcher GUI</summary>
-
-  </entry>
-
-  
-  <entry>
-    <title>XPtsp Black Theme</title>
-    <link href="http://0.0.0.0:4000/posts/xptsp-black/" rel="alternate" type="text/html" title="XPtsp Black Theme" />
-    <published>2024-11-27T08:39:00-06:00</published>
-  
-    <updated>2024-12-04T11:11:54-06:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/xptsp-black/</id>
-    <content type="text/html" src="http://0.0.0.0:4000/posts/xptsp-black/" />
-    <author>
-      <name>Douglas Orend</name>
-    </author>
-
-  
-    
-    <category term="XPtsp" />
-    
-    <category term="XPtsp Themes" />
-    
-  
-
-  <summary>The Black theme for XP Theme Source Patcher (XPtsp)</summary>
-
-  </entry>
-
-  
-  <entry>
-    <title>XPtsp Blue Theme</title>
-    <link href="http://0.0.0.0:4000/posts/xptsp-blue/" rel="alternate" type="text/html" title="XPtsp Blue Theme" />
-    <published>2024-11-26T08:39:00-06:00</published>
-  
-    <updated>2024-12-04T11:11:54-06:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/xptsp-blue/</id>
-    <content type="text/html" src="http://0.0.0.0:4000/posts/xptsp-blue/" />
-    <author>
-      <name>Douglas Orend</name>
-    </author>
-
-  
-    
-    <category term="XPtsp" />
-    
-    <category term="XPtsp Themes" />
-    
-  
-
-  <summary>The Blue theme for XP Theme Source Patcher (XPtsp)</summary>
-
-  </entry>
-
-  
-  <entry>
-    <title>XPtsp Green Theme</title>
-    <link href="http://0.0.0.0:4000/posts/xptsp-green/" rel="alternate" type="text/html" title="XPtsp Green Theme" />
-    <published>2024-11-25T08:39:00-06:00</published>
-  
-    <updated>2024-12-04T11:11:54-06:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/xptsp-green/</id>
-    <content type="text/html" src="http://0.0.0.0:4000/posts/xptsp-green/" />
-    <author>
-      <name>Douglas Orend</name>
-    </author>
-
-  
-    
-    <category term="XPtsp" />
-    
-    <category term="XPtsp Themes" />
-    
-  
-
-  <summary>The Green theme for XP Theme Source Patcher (XPtsp)</summary>
 
   </entry>
 
