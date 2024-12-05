@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>Doug's Blog</title>
   <subtitle>Helpful information about customizing Ubuntu ISOs, Windows installs, and other things</subtitle>
-  <updated>2024-12-05T12:53:05-06:00</updated>
+  <updated>2024-12-05T15:15:29-06:00</updated>
   <author>
     <name>Douglas Orend</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -24,7 +24,7 @@
     <link href="http://0.0.0.0:4000/posts/live-bootscreen-patcher/" rel="alternate" type="text/html" title="Live Bootscreen Patcher" />
     <published>2024-12-03T08:39:00-06:00</published>
   
-    <updated>2024-12-03T08:39:00-06:00</updated>
+    <updated>2024-12-05T12:55:21-06:00</updated>
   
     <id>http://0.0.0.0:4000/posts/live-bootscreen-patcher/</id>
     <content type="text/html" src="http://0.0.0.0:4000/posts/live-bootscreen-patcher/" />
@@ -120,7 +120,7 @@
     <link href="http://0.0.0.0:4000/posts/drive-space-indicator/" rel="alternate" type="text/html" title="Drive Space Indicator" />
     <published>2024-11-29T08:39:00-06:00</published>
   
-    <updated>2024-11-29T08:39:00-06:00</updated>
+    <updated>2024-12-05T12:55:21-06:00</updated>
   
     <id>http://0.0.0.0:4000/posts/drive-space-indicator/</id>
     <content type="text/html" src="http://0.0.0.0:4000/posts/drive-space-indicator/" />

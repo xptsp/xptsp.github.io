@@ -1,7 +1,7 @@
 ---
 # the default layout is 'page'
 icon: fas fa-info-circle
-order: 4
+order: 11
 ---
 I decided it is time to share my personal Linux experience regarding Ubuntu ISO customization.  I'm doing so, hoping that it will be helpful to people looking to set up Ubuntu on their machines, especially rookies...  So this blog seeks to detail ways to customize Ubuntu (and maybe Debian) installs easily, as well as describe how my home networking is set up....  
 
