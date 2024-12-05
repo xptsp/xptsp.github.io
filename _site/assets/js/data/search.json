@@ -1,6 +1,23 @@
 [
   
   {
+    "title": "Live Bootscreen Patcher",
+    "url": "/posts/live-bootscreen-patcher/",
+    "categories": "LBS",
+    "tags": "LBS",
+    "date": "2024-12-03 08:39:00 -0600",
+    
+
+
+
+
+
+    
+    "snippet": "Live Boot Screen Patcher will make a backup of your existing kernel files and modify them according to the color pallet from the (4bit, 16 color) boot screen used.Each time you change your boot scr...",
+    "content": "Live Boot Screen Patcher will make a backup of your existing kernel files and modify them according to the color pallet from the (4bit, 16 color) boot screen used.Each time you change your boot screen the backup will be used to be sure a clean kernel will be modified.  In case of a restore, the backup will be restored to make sure the kernels are as the were before using the program.                Requirements:  Windows XP (x86) only (All Bootscreens are tested on an XP Professional Service Pack 3)  Languages: allContaining:  Green, Blue, Red, and Purple Vista-like bootscreens.  The ability to patch your kernel with a custom bootscreen  The ability to patch your kernel in a XP-CD Source with a custom bootscreenDownloads\t\t\t\t\t\t\t\t\t\t\t\t\tLink: LBS-Patcher.v2.4.exe\t\t\tMD5: eddfebfbdc18ece1e0061b2285cfc079\t\t\tSHA256: 6a86a324315b3dab9371033a405d344b34f21547648c9ac45a422f5ac67b136b\t\t\tHow to make your own bootscreen:To make a custom bootscreen, you’ll need an imaging program which can index .bmp’s to 4bit (16 colors).For example you can use “Gimp” (Freeware). Since we used this software, the rest of this tutorial and the steps described below are based on Gimp.&lt;/p&gt;  First, you’ll need two sample bitmaps (background &amp; progress bar) which you can later modify. These .bmp files can be obtained by clicking on the “Get BMP’s” button in the LBS Patcher or through an sample .lbs file (extract with eg. 7-Zip). You can save them anywhere you like.  Now, open the .bmp files in Gimp and open the color map (Windows &gt; Dockable dialogs). If you like, you can change the colors in the pallet a bit, but you can not add colors. 16 is the maximum! Also the first color has to be black (value: 000000).  After modifying, you’ll have to save the two files. Save the background image as ‘BG.bmp’ and the progress bar image as ‘PB.bmp’. If you have multiple layers, please merge them when saving to keep the correct color pallet. The BG.bmp should have a resolution of 640x480.  Go to the location where you saved the images and zip the BG.bmp and PB.bmp files together. You can name this file whatever you like, as long as it has this composition: “anyname_boot.zip”. (You can zip, rar or 7z the 2 bitmap’s and even rename it to”anyname_boot.lbs” if you like, but all will work “anyname_boot.zip, rar,7z”)Now you can select “Custom Bootscreen” in the patcher and locate your “anyname_boot.zip” file!!\t        \t\t\t\t\t\tChangelog:\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tv2.1\t\t\t\t\t\t\t\t\t\t\tauto-change the colors from the 4bit pallet in the kernel to the 4bit color pallet used in the bitmap.\t\t\t\t\t\tredone all bootscreen bitmaps and hex edited them to make them visible.\t\t\t\t\t\tadded red and purple XPtsp bootscreens\t\t\t\t\t\tadded preview popup window (tnx Dougiefresh)\t\t\t\t\t\tnew way to use custom bootscreens via zipped bitmaps from any provided location.\t\t\t\t\t\tadded checks to make sure correct bitmaps are being used.\t\t\t\t\t\tadded a get sample button.\t\t\t\t\t\tmulti lang support.\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tv2.2\t\t\t\t\t\t\t\t\t\t\tThe ability to patch your kernel in a XP-CD Source with a custom bootscreen\t\t\t\t\t\tAdded some skins\t\t\t\t\t\tSome minor error fixes\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tv2.3\t\t\t\t\t\t\t\t\t\t\tFixed bootscreen fade-in at XP start\t\t\t\t\t\tMajor patching speedup\t\t\t\t\t\tadded a button to check for update/bootscreens (navigates to the default browser)\t\t\t\t\t\trepairs a bug from v2.2\t\t\t\t\t\tminor script fixes and updates\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tv2.4\t\t\t\t\t\t\t\t\t\t\tupdated the uninstaller\t\t\t\t\t\tnew setup installer (inno setup)\t\t\t\t\t\tadded checks for kernel Update's or Downgrades (to make a new backup)\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t"
+  },
+  
+  {
     "title": "LBS Bootscreens A-G",
     "url": "/posts/bootscreens-a-g/",
     "categories": "LBS",

@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>Doug's Blog</title>
   <subtitle>Helpful information about customizing Ubuntu ISOs, Windows installs, and other things</subtitle>
-  <updated>2024-12-05T07:31:19-06:00</updated>
+  <updated>2024-12-05T09:21:17-06:00</updated>
   <author>
     <name>Douglas Orend</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -17,6 +17,30 @@
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
+
+  
+  <entry>
+    <title>Live Bootscreen Patcher</title>
+    <link href="http://0.0.0.0:4000/posts/live-bootscreen-patcher/" rel="alternate" type="text/html" title="Live Bootscreen Patcher" />
+    <published>2024-12-03T08:39:00-06:00</published>
+  
+    <updated>2024-12-03T08:39:00-06:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/live-bootscreen-patcher/</id>
+    <content type="text/html" src="http://0.0.0.0:4000/posts/live-bootscreen-patcher/" />
+    <author>
+      <name>Douglas Orend</name>
+    </author>
+
+  
+    
+    <category term="LBS" />
+    
+  
+
+  <summary>Customize your Windows XP Boot Screen</summary>
+
+  </entry>
 
   
   <entry>
@@ -111,32 +135,6 @@
   
 
   <summary>Drive Space Indicator helps you stay on top of available disk space</summary>
-
-  </entry>
-
-  
-  <entry>
-    <title>XP Theme Source Patcher GUI</title>
-    <link href="http://0.0.0.0:4000/posts/xptsp-gui/" rel="alternate" type="text/html" title="XP Theme Source Patcher GUI" />
-    <published>2024-11-28T08:39:00-06:00</published>
-  
-    <updated>2024-12-04T18:37:54-06:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/xptsp-gui/</id>
-    <content type="text/html" src="http://0.0.0.0:4000/posts/xptsp-gui/" />
-    <author>
-      <name>Douglas Orend</name>
-    </author>
-
-  
-    
-    <category term="XPtsp" />
-    
-    <category term="XPtsp Themes" />
-    
-  
-
-  <summary>XP Theme Source Patcher GUI</summary>
 
   </entry>
 
