@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>Doug's Blog</title>
   <subtitle>Helpful information about customizing Ubuntu ISOs, Windows installs, and other things</subtitle>
-  <updated>2024-12-04T18:35:50-06:00</updated>
+  <updated>2024-12-04T19:40:43-06:00</updated>
   <author>
     <name>Douglas Orend</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -20,11 +20,35 @@
 
   
   <entry>
+    <title>Drive Space Indicator</title>
+    <link href="http://0.0.0.0:4000/posts/drive-space-indicator/" rel="alternate" type="text/html" title="Drive Space Indicator" />
+    <published>2024-11-29T08:39:00-06:00</published>
+  
+    <updated>2024-11-29T08:39:00-06:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/drive-space-indicator/</id>
+    <content type="text/html" src="http://0.0.0.0:4000/posts/drive-space-indicator/" />
+    <author>
+      <name>Douglas Orend</name>
+    </author>
+
+  
+    
+    <category term="DSI" />
+    
+  
+
+  <summary>Drive Space Indicator helps you stay on top of available disk space</summary>
+
+  </entry>
+
+  
+  <entry>
     <title>XP Theme Source Patcher GUI</title>
     <link href="http://0.0.0.0:4000/posts/xptsp-gui/" rel="alternate" type="text/html" title="XP Theme Source Patcher GUI" />
     <published>2024-11-28T08:39:00-06:00</published>
   
-    <updated>2024-12-04T16:26:16-06:00</updated>
+    <updated>2024-12-04T18:37:54-06:00</updated>
   
     <id>http://0.0.0.0:4000/posts/xptsp-gui/</id>
     <content type="text/html" src="http://0.0.0.0:4000/posts/xptsp-gui/" />
@@ -119,32 +143,6 @@
   
 
   <summary>The Green theme for XP Theme Source Patcher (XPtsp)</summary>
-
-  </entry>
-
-  
-  <entry>
-    <title>XPtsp NeonBlue Theme</title>
-    <link href="http://0.0.0.0:4000/posts/xptsp-neonblue/" rel="alternate" type="text/html" title="XPtsp NeonBlue Theme" />
-    <published>2024-11-24T08:39:00-06:00</published>
-  
-    <updated>2024-12-04T11:11:54-06:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/xptsp-neonblue/</id>
-    <content type="text/html" src="http://0.0.0.0:4000/posts/xptsp-neonblue/" />
-    <author>
-      <name>Douglas Orend</name>
-    </author>
-
-  
-    
-    <category term="XPtsp" />
-    
-    <category term="XPtsp Themes" />
-    
-  
-
-  <summary>The NeonBlue theme for XP Theme Source Patcher (XPtsp)</summary>
 
   </entry>
 

@@ -1,6 +1,23 @@
 [
   
   {
+    "title": "Drive Space Indicator",
+    "url": "/posts/drive-space-indicator/",
+    "categories": "DSI",
+    "tags": "DSI",
+    "date": "2024-11-29 08:39:00 -0600",
+    
+
+
+
+
+
+    
+    "snippet": "Drive Space Indicator helps you stay on top of available disk space by doing the following: it changes the icons you see in Computer (or My Computer) and puts a progress bar under each icon; the pr...",
+    "content": "Drive Space Indicator helps you stay on top of available disk space by doing the following: it changes the icons you see in Computer (or My Computer) and puts a progress bar under each icon; the progress bar displays how full your drives are. On top of that, Drive Space Indicator can put icons in the system tray, icons that present the same progress bar.Downloads\t\t\t\t\t\t\t\t\t\t\t\t\tLink: DriveSpace_v5.3.7.6_SFX.exe\t\t\tMD5: 4f854f8d54de176add904c20954716a1\t\t\tSHA256: 25b68430e186a1dd6472a556d9c9c589cb6586cdf470af3ee43b4c290c9893f5\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tLink: DriveSpace_v5.3.7.6_Silent.exe\t\t\tMD5: 2eb254835d33b99ca3d8e5640800ea71\t\t\tSHA256: 08cdd7e56a3df21a04c8faf7cf1e89a21da620926861707826fe9af4cb173a93\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tLink: DriveSpace_v5.3.7.6_AddOn.7z\t\t\tMD5: e585f5a243dc49ded343d32013dfe2b4\t\t\tSHA256: 9077420a0547a8f3ab01e32ca2e8a7e76e67b7fbb468f67a589fd951b74675b0\t\t\tProgram GUI                                                                Drive Themes      Blue    MacBlack    MacRed        Vista    VistaBlack    VistaBlue        WinXP    XPtsp      "
+  },
+  
+  {
     "title": "XP Theme Source Patcher GUI",
     "url": "/posts/xptsp-gui/",
     "categories": "XPtsp, XPtsp Themes",
