@@ -4,7 +4,7 @@
   <id>http://0.0.0.0:4000/</id>
   <title>Doug's Blog</title>
   <subtitle>Helpful information about customizing Ubuntu ISOs, Windows installs, and other things</subtitle>
-  <updated>2024-12-05T19:42:10-06:00</updated>
+  <updated>2024-12-06T06:08:07-06:00</updated>
   <author>
     <name>Douglas Orend</name>
     <uri>http://0.0.0.0:4000/</uri>
@@ -17,6 +17,30 @@
   <icon>/assets/img/favicons/favicon.ico</icon>
   <logo>/assets/img/favicons/favicon-96x96.png</logo>
 
+
+  
+  <entry>
+    <title>Drive Space Indicator Changelog</title>
+    <link href="http://0.0.0.0:4000/posts/dsi-changelog/" rel="alternate" type="text/html" title="Drive Space Indicator Changelog" />
+    <published>2024-12-05T08:39:00-06:00</published>
+  
+    <updated>2024-12-05T08:39:00-06:00</updated>
+  
+    <id>http://0.0.0.0:4000/posts/dsi-changelog/</id>
+    <content type="text/html" src="http://0.0.0.0:4000/posts/dsi-changelog/" />
+    <author>
+      <name>Douglas Orend</name>
+    </author>
+
+  
+    
+    <category term="DSI" />
+    
+  
+
+  <summary>Changelog for Drive Space Indicator</summary>
+
+  </entry>
 
   
   <entry>
@@ -111,30 +135,6 @@
   
 
   <summary>List of Live Bootscreen Patcher downloadables</summary>
-
-  </entry>
-
-  
-  <entry>
-    <title>Drive Space Indicator</title>
-    <link href="http://0.0.0.0:4000/posts/drive-space-indicator/" rel="alternate" type="text/html" title="Drive Space Indicator" />
-    <published>2024-11-29T08:39:00-06:00</published>
-  
-    <updated>2024-12-05T12:55:21-06:00</updated>
-  
-    <id>http://0.0.0.0:4000/posts/drive-space-indicator/</id>
-    <content type="text/html" src="http://0.0.0.0:4000/posts/drive-space-indicator/" />
-    <author>
-      <name>Douglas Orend</name>
-    </author>
-
-  
-    
-    <category term="DSI" />
-    
-  
-
-  <summary>Drive Space Indicator helps you stay on top of available disk space</summary>
 
   </entry>
 
