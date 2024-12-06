@@ -4,6 +4,21 @@ layout: page
 
 {% include lang.html %}
 
+{% assign all_pinned = page.posts | where: 'pin', 'true' %}
+{% assign all_normal = page.posts | where_exp: 'item', 'item.pin != true and item.hidden != true' %}
+
+{% assign posts = '' | split: '' %}
+{% if all_pinned.size > 0 %}
+	{% for i in (0..all_pinned.size) limit: all_pinned.size %}
+		{% assign posts = posts | push: all_pinned[i] %}
+	{% endfor %}
+{% endif %}
+{% if all_normal.size > 0 %}
+	{% for i in (0..all_normal.size) limit: all_normal.size %}
+		{% assign posts = posts | push: all_normal[i] %}
+	{% endfor %}
+{% endif %}
+
 <div id="post-list" class="flex-grow-1 px-xl-1">
   <h1 class="ps-lg-2">
     <i class="far fa-folder-open fa-fw text-muted"></i>
