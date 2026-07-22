@@ -7,6 +7,8 @@ tags: [LBS]
 image:
   path: /assets/img/lbs/Logo_LBS.webp
   lqip: data:image/webp;base64,UklGRjwAAABXRUJQVlA4IDAAAADQAgCdASoYAA4AP3Ggxli/q6ejsAgD8C4JQBWABaSAAP7qkByJsKEIetW27MmAAAA=
+  width: 190
+  height: 190
 force_url: /tags/lbs/
 pin: true
 ---
