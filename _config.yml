@@ -9,17 +9,17 @@ theme: jekyll-theme-chirpy
 lang: en
 
 # Change to your timezone › https://zones.arilyn.cc
-timezone:
+timezone: America/Chicago
 
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: Chirpy # the main title
+title: Doug's Blog # the main title
 
-tagline: OS Customization Blog # it will display as the subtitle
+tagline: My OS Customization Blog # it will display as the subtitle
 
 description: >- # used by seo meta and the atom feed
-  A blog about customizing Ubuntu and OpenWRT, as well as listing retired projects for Windows XP.
+  My blog about customizing Ubuntu and OpenWRT, as well as listing retired projects for Windows XP.
 
 # Fill in the protocol & hostname for your site.
 # E.g. 'https://username.github.io', note that it does not end with a '/'.
@@ -99,7 +99,7 @@ theme_mode: # [light | dark]
 cdn:
 
 # the avatar on sidebar, support local or CORS resources
-avatar:
+avatar: /assets/img/favicons/web-app-manifest-512x512.png
 
 # The URL of the site-wide social preview image used in SEO `og:image` meta tag.
 # It can be overridden by a customized `page.image` in front matter.
