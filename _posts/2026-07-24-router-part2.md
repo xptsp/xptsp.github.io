@@ -117,7 +117,7 @@ service dnsmasq restart
 service adguardhome restart
 ```
 
-The web address for the AGH on your router is **[http://openwrt.lan:3000/](http://openwrt.lan:3000/)**
+The web address for the AGH on your router is ```http://openwrt.lan:3000/```
 (unless you've changed the hostname).  Username is **root**, password is **admin**.  
 
 I highly recommend changing the username/password credentials.  I recommend reading the page at
