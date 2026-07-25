@@ -246,4 +246,6 @@ What we've configured is is an acceptable factory-equivant router, sans possible
 support (unknown if factory firmware has this).  This is okay, but I know we can do
 better than factory-equivant router firmware!  After all, we installed OpenWRT!!!
 
-Once the router has rebooted, the new IP address is **192.168.20.1**...  Onwards!
+Once the router has rebooted, the new IP address is **192.168.20.1**...  
+
+We have more stuff we can install!  [Onwards!](https://xptsp.github.io/posts/router-part2/)
