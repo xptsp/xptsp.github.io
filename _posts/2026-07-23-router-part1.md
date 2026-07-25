@@ -13,7 +13,7 @@ force_url: /tags/router/
 pin: true
 ---
 
-# The Purchase
+## The Purchase
 
 About 3 years ago, I purchased a [Linksys E8450 Router](https://www.amazon.com/dp/B08LMQLG7X)
 from Amazon.  I [did my research](https://openwrt.org/toh/linksys/e8450) and decided on this router
@@ -27,7 +27,7 @@ mine has been done the first time for many years, and again to upgrade to **24.1
 I've also documented the changes I've made to my OpenWrt installation, and this series
 is meant to reflect the documentation I've made.
 
-# The Expected Destination
+## The Expected Destination
 
 By the end of this series, we will have customized our installation of
 [OpenWRT 25.12.5](https://downloads.openwrt.org/releases/25.12.5/targets/mediatek/mt7622/)
@@ -35,7 +35,7 @@ for this router, then created and flashed our custom firmware to flash to it.  T
 enable us to reset to our defaults easily (as opposed to the unmodified firmware defaults),
 in the event we screw something up royally (which I've done **WAY** too many times)...
 
-# Router Basics
+# Let's Get Started
 
 > This is a **ONE-SIZE FITS MINE** documentation!  It should be noted that these
 > instructions work for this specific router, and adjustments for other routers should
@@ -52,10 +52,15 @@ installation.  If you've already modified the router IP address, use that instea
 ssh root@192.168.1.1
 ```
 
-We need to set root password to **MoeLarryCurly**.  This prevents unauthorized access:
+## Set the Root password
+
+Setting the root password prevents unauthorized access.  I'm going to set my root 
+password to **MoeLarryCurly**.  Obviously, **DON'T** use this password for your machine.
 ```shell
 (echo MoeLarryCurly; echo MoeLarryCurly) | passwd
 ```
+
+## Enable Upgrade Checking
 
 We're enabling the setting to check for upgrades to the firmware.  This should be set to
 **0** if you don't want to be reminded that there is an upgrade available.  IMHO, I'm
@@ -63,6 +68,8 @@ trying to stay secure as possible, so it's always **1** for me:
 ```shell
 uci set attendedsysupgrade.client.login_check_for_upgrades='1'
 ```
+
+## 2.4GHz Wifi Access Point
 
 Next, we're configuring my 2.4GHz Wifi access point:
 ```shell
@@ -79,6 +86,8 @@ uci set wireless.default_radio0.key='MoeLarryCurlyShemp4'
 uci set wireless.default_radio0.ocv='0'
 uci set wireless.default_radio0.ifname="wlan-24g"
 ```
+
+## 5GHz Wifi Access Point
 
 Can't forget the 5GHz Wifi access point:
 ```shell
@@ -99,6 +108,8 @@ uci set wireless.wifinet1.key='MoeLarryCurlyShemp4'
 uci set wireless.wifinet1.ocv='0'
 ```
 
+## Router IP Address
+
 We're changing the default router address to **192.168.20.1**.  This should help prevent
 expected future conflicts with our planned VPN on other networks:
 ```shell
@@ -109,8 +120,12 @@ uci add_list network.lan.ipaddr='192.168.20.1/24'
 uci set network.lan.multipath='off'
 ```
 
+## Static IP Assignments
+
 Gotta add our static IP assignments, so that my equipment ends up where I expect them
-to be.  And no, these are **NOT** my machine names!  (Notice a theme?)
+to be.  And no, these are **NOT** my machine names!  (Notice a theme?)  I consider this
+to be part of a customized "basic" router setup, as I don't want to waste time trying to 
+figure out where services actually are instead of where I wanted them to be.
 ```shell
 uci set dhcp.moe_pc=host
 uci set dhcp.moe_pc.name='Moe'
@@ -137,6 +152,8 @@ uci set dhcp.shemp_pc.mac='66:1C:C8:CC:AD:43'
 uci set dhcp.shemp_pc.ip='192.168.20.103'
 ```
 
+## Set DNS Provider to CloudFlare 
+
 We're changing my router's IPv4 and IPv6 DNS providers to CloudFlare:
 ```shell
 uci set network.wan.peerdns="0"
@@ -149,6 +166,8 @@ uci -q delete network.wan6.dns
 uci add_list network.wan6.dns="2606:4700:4700::1111"
 uci add_list network.wan6.dns="2606:4700:4700::1001"
 ```
+
+## Static IP Addresses
 
 Computer **Larry** is a Raspberry Pi with 2 access points.  Since they are not a part of
 the planned network for **THIS** router, we have to add routing for those devices so I can
@@ -165,6 +184,7 @@ uci set network.@route[-1].target='192.168.5.0/24'
 uci set network.@route[-1].gateway='192.168.20.101'
 ```
 
+## Other Small Settings
 We need to enable dropping invalid packets and enable software and hardware flow offloading:
 ```shell
 uci set firewall.@defaults[0].drop_invalid='1'
@@ -183,6 +203,8 @@ We need to commit these changes now, but we're not going to reboot the router ye
 uci commit
 ```
 
+## Bash
+
 We need a better shell than what busybox offers, so we're going to install **bash**, change
 the default shell for **root**, then upgrade **wget** to the full version that supports
 HTTPS.  We also need to download the bash initialization script, and create a dos-equivalant
@@ -195,13 +217,14 @@ sed -i "s|/bin/ash|/bin/bash|g" /etc/passwd
 
 # Download bash startup script:
 FILE=/root/.shinit
-wget https://github.com/xptsp/bpiwrt-builder/raw/master/files/root/.bashrc -O ${FILE}
+wget https://xptsp.github.io/assets/files/bashrc.sh -O ${FILE}
 sed -i "s|32m|31m|" ${FILE}
 chmod +x ${FILE}
 echo "alias cls=clear" >> ${FILE}
 echo "${FILE}" >> /etc/sysupgrade.conf
 ```
 
+## Universal Plug-And-Play (uPnP)
 We also want uPnP services installed on this router:
 ```shell
 apk add luci-app-upnp
@@ -210,10 +233,15 @@ uci commit
 service miniupnpd restart
 ```
 
+## Reboot!
+
 Okay, now we're ready to reboot the router....
 ```shell
 reboot
 ```
+
+## Summary
+
 What we've configured is is an acceptable factory-equivant router, sans possible USB
 support (unknown if factory firmware has this).  This is okay, but I know we can do
 better than factory-equivant router firmware!  After all, we installed OpenWRT!!!
