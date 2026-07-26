@@ -97,15 +97,12 @@ uci set wireless.radio1.cell_density='0'
 uci set wireless.radio1.country='US'
 uci set wireless.radio1.channel='36'
 
-uci del wireless.default_radio1
-uci set wireless.wifinet1=wifi-iface
-uci set wireless.wifinet1.device='radio1'
-uci set wireless.wifinet1.mode='ap'
-uci set wireless.wifinet1.ssid='Four Stooges 5GHz'
-uci set wireless.wifinet1.encryption='sae'
-uci set wireless.wifinet1.ifname='wlan-5G'
-uci set wireless.wifinet1.key='MoeLarryCurlyShemp4'
-uci set wireless.wifinet1.ocv='0'
+uci -q del wireless.default_radio1.disabled
+uci set wireless.default_radio1.ssid='Four Stooges 5GHz'
+uci set wireless.default_radio1.encryption='sae'
+uci set wireless.default_radio1.key='MoeLarryCurlyShemp4'
+uci set wireless.default_radio1.ocv='0'
+uci set wireless.default_radio1.ifname="wlan-5g"
 ```
 
 ## Router IP Address
