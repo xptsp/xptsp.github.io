@@ -64,7 +64,7 @@ We need to install and configure AdGuardHome.  I am sharing my AGH configuration
 slighty modified to change the password held within. 
 ```shell
 apk add adguardhome luci-app-adguardhome
-wget https://xptsp.github.io/assets/files/adguardhome.yml -O /etc/adguardhome/adguardhome.yml
+wget https://github.com/xptsp/xptsp.github.io/raw/refs/heads/main/assets/files/adguardhome.yaml -O /etc/adguardhome/adguardhome.yaml
 ```
 
 We need to move dnsmasq to port 54 so AdGuardHome can use port 53:
