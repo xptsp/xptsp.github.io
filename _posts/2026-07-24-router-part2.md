@@ -1,6 +1,6 @@
 ---
 title: My Router - Part 2
-description: More Customization of OpenWrt on my Router!
+description: Adding Adblocking, plus other OpenWrt customization for my Router!
 date: 2026-07-24 22:56:00 -0600
 categories: [Router]
 tags: [Router]
@@ -177,3 +177,57 @@ apk add luci-app-wol
 uci set etherwake.setup.interface='br-lan'
 uci commit
 ```
+
+Let's add some targets so we can easily wake my machines over the network:
+```shell
+uci add luci-wol.moe_pc=target
+uci set luci-wol.moe_pc.name='Moe'
+uci set luci-wol.moe_pc.mac='F2:B0:C4:87:4A:13'
+uci set luci-wol.moe_pc.iface='br-lan'
+uci set luci-wol.moe_pc.broadcast='1'
+
+uci add luci-wol.larry_pc=target
+uci set luci-wol.larry_pc.name='Larry'
+uci set luci-wol.larry_pc.mac='12:BE:29:E0:97:CC'
+uci set luci-wol.larry_pc.iface='br-lan'
+uci set luci-wol.larry_pc.broadcast='1'
+
+uci add luci-wol.curly_pc=target
+uci set luci-wol.curly_pc.name='Curly'
+uci set luci-wol.curly_pc.mac='CA:70:26:36:EF:31'
+uci set luci-wol.curly_pc.iface='br-lan'
+uci set luci-wol.curly_pc.broadcast='1'
+
+uci add luci-wol.shemp_pc=target
+uci set luci-wol.shemp_pc.name='Shemp'
+uci set luci-wol.shemp_pc.mac='66:1C:C8:CC:AD:43'
+uci set luci-wol.shemp_pc.iface='br-lan'
+uci set luci-wol.shemp_pc.broadcast='1'
+```
+----
+
+## Tang
+
+Running a Tang server on OpenWrt allows you to set up Network-Bound Disk Encryption 
+(NBDE) using a lightweight router instead of a full Linux server.
+```shell
+apk add tang
+uci set tang.config.enabled='1'
+uci commit
+service tang restart
+```
+
+----
+
+## Summary
+
+Now that we are done instaling some additional services on our router, let's install
+USB support, as well as file sharing programs and a PXE Boot server.
+[Onwards to Part 3!](https://xptsp.github.io/posts/router-part3/)
+
+### Additional Information
+
+- [OpenWrt Wiki: AdGuard Home](https://openwrt.org/docs/guide-user/services/dns/adguard-home)
+- [OpenWrt Wiki: NTP Client / NTP Server](https://openwrt.org/docs/guide-user/services/ntp/client-server)
+- [OpenWrt Wiki: Wake-On-Lan](https://openwrt.org/docs/guide-user/services/w_o_l/wol)
+- [Network Bound Disk Encryption with clevis and tang on OpenWRT](https://zaage.it/tutorials/network-bound-disk-encryption-with-clevis-and-tang-on-openwrt/)
