@@ -207,7 +207,8 @@ cd /tmp
 wget https://www.kernel.org/pub/linux/utils/boot/syslinux/syslinux-6.03.tar.gz
 tar -xzf syslinux-6.03.tar.gz
 mkdir -p /mnt/pxeboot
-cp efi64/com32/elflink/ldlinux/ldlinux.e64 core/pxelinux.0 com32/elflink/ldlinux/ldlinux.c32 com32/menu/vesamenu.c32 com32/lib/libcom32.c32 com32/libutil/libutil.c32 /mnt/pxeboot/
+cd /tmp/syslinux-6.03
+cp efi64/com32/elflink/ldlinux/ldlinux.e64 bios/core/pxelinux.0 bios/com32/elflink/ldlinux/ldlinux.c32 bios/com32/menu/vesamenu.c32 bios/com32/lib/libcom32.c32 bios/com32/libutil/libutil.c32 /mnt/pxeboot/
 cp efi64/efi/syslinux.efi /mnt/pxeboot/syslinux64.efi
 cp efi32/efi/syslinux.efi /mnt/pxeboot/syslinux32.efi
 ln -sf /mnt/pxeboot/disks /mnt/pxeboot/pxelinux.cfg 
