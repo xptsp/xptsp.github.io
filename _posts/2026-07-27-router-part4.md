@@ -319,8 +319,8 @@ We need to download a few css and js files for this to work and add them to the
 sysupgrade file list:
 ```shell
 FILE=/mnt/pxeboot/autoindex.css
-wget https://github.com/julcap/nginx-style-autoindex/raw/refs/heads/master/.autoindex.js -O "${FILE/css/js}"
-wget https://github.com/julcap/nginx-style-autoindex/raw/refs/heads/master/.autoindex.css -O ${FILE}
+wget https://xptsp.github.io/assets/files/autoindex.js -O "${FILE/css/js}"
+wget https://xptsp.github.io/assets/files/autoindex.css -O "${FILE}"
 echo "${FILE}" >> /etc/sysupgrade.conf
 echo "${FILE/css/js}" >> /etc/sysupgrade.conf
 ```
@@ -359,7 +359,7 @@ figure something out...
 
 ## Summary
 
-Now we've got a router that automatically associates its IP address with a dynamic DNS
+Now we've got a router that automatically associates its WAN IP address with a dynamic DNS
 domain, and a web server that encrypts everything.  Also AGH has been configured to use
 the same SSL certificate that NGINX does, and now has DNS-over-TLS (DoT) and DNS-over-HTTPS
 (DoH) support.
