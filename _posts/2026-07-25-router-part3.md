@@ -151,8 +151,6 @@ First, let's enable and Configure TFTP in dnsmasq:
 uci set dhcp.@dnsmasq[0].enable_tftp='1'
 uci set dhcp.@dnsmasq[0].tftp_root='/mnt/pxeboot'
 uci set dhcp.@dnsmasq[0].dhcp_boot='pxelinux.0'
-uci add_list dhcp.linux.dhcp_option='209,pxelinux.cfg/default'
-uci set dhcp.linux.force='1'
 ```
 
 We need to set up 3 profiles: via BIOS, via UEFI x32 mode, and via UEFI x64 mode.
@@ -162,6 +160,8 @@ uci set dhcp.linux=boot
 uci set dhcp.linux.filename='pxelinux.0'
 uci set dhcp.linux.serveraddress='192.168.10.1'
 uci set dhcp.linux.servername='OpenWrt'
+uci add_list dhcp.linux.dhcp_option='209,pxelinux.cfg/default'
+uci set dhcp.linux.force='1'
 uci set dhcp.pxe_match=match
 uci set dhcp.pxe_match.networkid='bios'
 uci set dhcp.pxe_match.match='60,PXEClient:Arch:00000'
