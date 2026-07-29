@@ -119,19 +119,19 @@ echo "/etc/hotplug.d/acme/00-nginx" >> /etc/sysupgrade.conf
 
 ## AdGuardHome using SSL certificate
 
-Since we installed webdav (AGH) in part 2 of this series, we need to add the
+Since we installed AdGuardHome (AGH) in part 2 of this series, we need to add the
 directory to the jail mounts so the AGH can actually read the certificate and
 key, and change ownership and permissions:
 ```shell
-chown root:webdav /etc/acme/*/*.key
+chown root:adguardhome /etc/acme/*/*.key
 chmod 640 /etc/acme/*/*.key
-uci add_list webdav.config.jail_mount='/etc/acme/'${DOMAIN}'_ecc/'
+uci add_list adguardhome.config.jail_mount='/etc/acme/'${DOMAIN}'_ecc/'
 uci commit
 ```
 
 Now, we need to modify the AGH configuration file to enable the services:
 ```shell
-FILE=/etc/webdav/webdav.yaml
+FILE=/etc/adguardhome/adguardhome.yaml
 sed -i "s|server_name: .*|server_name: ${DOMAIN}|g" ${FILE}
 sed -i "s|certificate_path: .*|certificate_path: /etc/acme/${DOMAIN}_ecc/fullchain.cer|g" ${FILE}
 sed -i "s|private_key_path: .*|private_key_path: /etc/acme/${DOMAIN}_ecc/${DOMAIN}.key|g" ${FILE}
@@ -142,7 +142,7 @@ sed -i '/^tls:/{n;s/.*/  enabled: true/}' ${FILE}
 Finally, we need to restart webdav so it can listen for DNS requests from
 DNS-over-TLS (DoT) and DNS-over-HTTPS (DoH).
 ```
-service webdav restart
+service adguardhome restart
 ```
 
 If access to your DoT server from outside your intranet is desired, then we
@@ -160,7 +160,7 @@ uci commit
 service firewall restart
 ```
 
-Now webdav is available at ```https://router.example.com:3001```, fully excrypted!
+Now AGH is available at ```https://router.example.com:3001```, fully excrypted!
 Note that ```https://openwrt.lan:3001``` will give errors, but that's because the name
 in the SSL certificate doesn't match the hostname used.  Can we fix that?  Nope, no way
 to build a SSL certificate through Let's Encrypt for this domain name....
