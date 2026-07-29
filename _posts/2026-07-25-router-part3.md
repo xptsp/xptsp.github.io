@@ -158,7 +158,7 @@ We need to set up 3 profiles: via BIOS, via UEFI x32 mode, and via UEFI x64 mode
 # PXEboot profile: BIOS
 uci set dhcp.linux=boot
 uci set dhcp.linux.filename='pxelinux.0'
-uci set dhcp.linux.serveraddress='192.168.10.1'
+uci set dhcp.linux.serveraddress='192.168.20.1'
 uci set dhcp.linux.servername='OpenWrt'
 uci add_list dhcp.linux.dhcp_option='209,pxelinux.cfg/default'
 uci set dhcp.linux.force='1'
@@ -166,8 +166,8 @@ uci set dhcp.pxe_match=match
 uci set dhcp.pxe_match.networkid='bios'
 uci set dhcp.pxe_match.match='60,PXEClient:Arch:00000'
 uci set dhcp.pxe_boot=boot
-uci set dhcp.pxe_boot.filename='tag:bios,pxelinux.0,,192.168.10.1'
-uci set dhcp.pxe_boot.serveraddress='192.168.10.1'
+uci set dhcp.pxe_boot.filename='tag:bios,pxelinux.0,,192.168.20.1'
+uci set dhcp.pxe_boot.serveraddress='192.168.20.1'
 uci set dhcp.pxe_boot.servername='OpenWrt'
 
 # PXEboot profile: UEFI x64
@@ -178,8 +178,8 @@ uci set dhcp.pxe_x64_uefi_match2=match
 uci set dhcp.pxe_x64_uefi_match2.networkid='efi64'
 uci set dhcp.pxe_x64_uefi_match2.match='60,PXEClient:Arch:00009'
 uci set dhcp.pxe_x64_uefi_boot=boot
-uci set dhcp.pxe_x64_uefi_boot.filename='tag:efi64,syslinux64.efi,,192.168.10.1'
-uci set dhcp.pxe_x64_uefi_boot.serveraddress='192.168.10.1'
+uci set dhcp.pxe_x64_uefi_boot.filename='tag:efi64,syslinux64.efi,,192.168.20.1'
+uci set dhcp.pxe_x64_uefi_boot.serveraddress='192.168.20.1'
 uci set dhcp.pxe_x64_uefi_boot.servername='OpenWrt'
 
 # PXEboot profile: UEFI x86
@@ -190,8 +190,8 @@ uci set dhcp.pxe_x86_uefi_match2=match
 uci set dhcp.pxe_x86_uefi_match2.networkid='efi64'
 uci set dhcp.pxe_x86_uefi_match2.match='60,PXEClient:Arch:00006'
 uci set dhcp.pxe_x86_uefi_boot=boot
-uci set dhcp.pxe_x86_uefi_boot.filename='tag:efi32,syslinux32.efi,,192.168.10.1'
-uci set dhcp.pxe_x86_uefi_boot.serveraddress='192.168.10.1'
+uci set dhcp.pxe_x86_uefi_boot.filename='tag:efi32,syslinux32.efi,,192.168.20.1'
+uci set dhcp.pxe_x86_uefi_boot.serveraddress='192.168.20.1'
 uci set dhcp.pxe_x86_uefi_boot.servername='OpenWrt'
 ```
 
