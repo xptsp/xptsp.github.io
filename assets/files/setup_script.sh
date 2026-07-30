@@ -556,6 +556,37 @@ uci commit
 service nginx restart
 
 #####################################################################################
+# Set up access to the Linksys CM3008 Cable Modem:
+#####################################################################################
+uci -q del network.modem
+uci set network.modem="interface"
+uci set network.modem.proto="static"
+uci set network.modem.device="@wan"
+uci set network.modem.ipaddr="192.168.100.2"
+uci set network.modem.netmask="255.255.255.0"
+uci commit network
+service network restart
+
+uci del_list firewall.@zone[1].network="modem"
+uci add_list firewall.@zone[1].network="modem"
+uci commit firewall
+service firewall restart
+
+# Create a new HTTPS server definition for the cable modem:
+uci set nginx.https_modem=server
+uci set nginx.https_modem.listen='443 ssl' '[::]:443 ssl'
+uci set nginx.https_modem.include='restrict_locally'
+uci set nginx.https_modem.server_name='modem.almostparadise.freeddns.org'
+uci set nginx.https_modem.ssl_certificate='/etc/acme/almostparadise.freeddns.org_ecc/almostparadise.freeddns.org.cer'
+uci set nginx.https_modem.ssl_certificate_key='/etc/acme/almostparadise.freeddns.org_ecc/almostparadise.freeddns.org.key'
+uci set nginx.https_modem.ssl_session_cache='shared:SSL:32k'
+uci set nginx.https_modem.ssl_session_timeout='64m'
+uci set nginx.https_modem.access_log='off; # logd openwrt'
+uci set nginx.https_modem.location='/ { proxy_pass https://192.168.100.1; } # Cable Modem'
+uci commit
+service nginx restart
+
+#####################################################################################
 # Set up our basic WebDAV server:
 #####################################################################################
 apk add nginx-mod-dav-ext
@@ -619,3 +650,110 @@ service nginx restart
 #************************************************************************************
 #******************************* ROUTER SERIES: PART 5 ******************************
 #************************************************************************************
+#####################################################################################
+# Guest Wifi
+#####################################################################################
+# Create new guest interface for network:
+uci -q delete network.guest_dev
+uci set network.guest_dev="device"
+uci set network.guest_dev.type="bridge"
+uci set network.guest_dev.name="br-guest"
+uci set network.guest_dev.bridge_empty='1'
+uci -q delete network.guest
+uci set network.guest="interface"
+uci set network.guest.proto="static"
+uci set network.guest.device="br-guest"
+uci add_list network.guest.ipaddr='192.168.3.1/24'
+uci add_list network.guest.dns='192.168.3.1'
+uci commit network
+service network restart
+
+# Configure wireless interfaces on guest interface:
+WIFI_DEV="$(uci get wireless.@wifi-iface[0].device)"
+uci -q delete wireless.guest
+uci set wireless.guest="wifi-iface"
+uci set wireless.guest.device="${WIFI_DEV}"
+uci set wireless.guest.mode="ap"
+uci set wireless.guest.network="guest"
+uci set wireless.guest.ssid="Nacho Wifi"
+uci set wireless.guest.encryption="none"
+uci set wireless.guest.isolate='1'
+uci set wireless.guest.ifname='wguest-24g'
+uci set wireless.guest.disabled='1'
+
+WIFI_DEV="$(uci get wireless.@wifi-iface[1].device)"
+uci -q delete wireless.guest2
+uci set wireless.guest2="wifi-iface"
+uci set wireless.guest2.device="${WIFI_DEV}"
+uci set wireless.guest2.mode="ap"
+uci set wireless.guest2.network="guest"
+uci set wireless.guest2.ssid="Nacho Wifi 5GHz"
+uci set wireless.guest2.encryption="none"
+uci set wireless.guest2.isolate='1'
+uci set wireless.guest2.ifname='wguest-5ghz'
+uci set wireless.guest2.disabled='1'
+uci commit wireless
+wifi reload
+
+# Configure DHCP for guest interface:
+uci -q delete dhcp.guest
+uci set dhcp.guest="dhcp"
+uci set dhcp.guest.interface="guest"
+uci set dhcp.guest.start="100"
+uci set dhcp.guest.limit="150"
+uci set dhcp.guest.leasetime="1h"
+uci add_list dhcp.guest.dhcp_option='3,192.168.3.1'
+uci add_list dhcp.guest.dhcp_option='6,192.168.3.1'
+uci add_list dhcp.guest.dhcp_option='42,192.168.3.1'
+uci set dhcp.guest.force="1"
+uci commit dhcp
+service dnsmasq restart
+
+# Configure firewall to allow DNS and DHCP for Guest network:
+uci -q delete firewall.guest
+uci set firewall.guest="zone"
+uci set firewall.guest.name="guest"
+uci add_list firewall.guest.network='guest'
+uci set firewall.guest.input="REJECT"
+uci set firewall.guest.output="ACCEPT"
+uci set firewall.guest.forward="REJECT"
+uci -q delete firewall.guest_wan
+uci set firewall.guest_wan="forwarding"
+uci set firewall.guest_wan.src="guest"
+uci set firewall.guest_wan.dest="wan"
+uci -q delete firewall.guest_dns
+uci set firewall.guest_dns="rule"
+uci set firewall.guest_dns.name="Allow-DNS-Guest"
+uci set firewall.guest_dns.src="guest"
+uci set firewall.guest_dns.dest_port="53"
+uci set firewall.guest_dns.proto="tcp udp"
+uci set firewall.guest_dns.target="ACCEPT"
+uci -q delete firewall.guest_dhcp
+uci set firewall.guest_dhcp="rule"
+uci set firewall.guest_dhcp.name="Allow-DHCP-Guest"
+uci set firewall.guest_dhcp.src="guest"
+uci set firewall.guest_dhcp.dest_port="67"
+uci set firewall.guest_dhcp.proto="udp"
+uci set firewall.guest_dhcp.family="ipv4"
+uci set firewall.guest_dhcp.target="ACCEPT"
+
+# Configure firewall to allow LAN devices to access GUEST devices:	
+uci set firewall.lan_guest="forwarding"
+uci set firewall.lan_guest.src='lan'
+uci set firewall.lan_guest.dest='guest'
+
+# Commit changes and restart firewall:
+uci commit
+service firewall restart
+
+#####################################################################################
+# Install NoDogSplash:
+#####################################################################################
+apk add nodogsplash #luci-app-nodogsplash
+sed -i "s|option gatewayinterface .*|option gatewayinterface 'br-guest'|" /etc/config/nodogsplash
+service nodogsplash restart
+
+# Replace the Guest Splash page with something better!
+FILE=/etc/nodogsplash/htdocs/splash.html
+wget https://xptsp.github.io/assets/files/splash.html -O /etc/nodogsplash/htdocs/splash.html
+echo "${FILE}" >> /etc/sysupgrade.conf

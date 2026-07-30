@@ -267,6 +267,48 @@ service nginx restart
 
 ----
 
+## Linksys Cable Modem Access
+
+I have a [Linksys CM3008 Cable Modem](https://www.amazon.com/dp/B01DACQMH4?lv=shuf&channelId=500&plpRedirect=mhFallback).
+On occasion, I need access to my cable modem's admin access page.  Here's how I accomplished it:
+```shell
+uci -q del network.modem
+uci set network.modem="interface"
+uci set network.modem.proto="static"
+uci set network.modem.device="@wan"
+uci set network.modem.ipaddr="192.168.100.2"
+uci set network.modem.netmask="255.255.255.0"
+uci commit network
+service network restart
+
+uci del_list firewall.@zone[1].network="modem"
+uci add_list firewall.@zone[1].network="modem"
+uci commit firewall
+service firewall restart
+```
+Now it's available at ```http://192.168.100.1```.
+
+Since we installed NGINX in the last step, let's create an encrypted way to access it, too:
+```shell
+uci set nginx.https_modem=server
+uci set nginx.https_modem.listen='443 ssl' '[::]:443 ssl'
+uci set nginx.https_modem.include='restrict_locally'
+uci set nginx.https_modem.server_name='modem.almostparadise.freeddns.org'
+uci set nginx.https_modem.ssl_certificate='/etc/acme/almostparadise.freeddns.org_ecc/almostparadise.freeddns.org.cer'
+uci set nginx.https_modem.ssl_certificate_key='/etc/acme/almostparadise.freeddns.org_ecc/almostparadise.freeddns.org.key'
+uci set nginx.https_modem.ssl_session_cache='shared:SSL:32k'
+uci set nginx.https_modem.ssl_session_timeout='64m'
+uci set nginx.https_modem.access_log='off; # logd openwrt'
+uci set nginx.https_modem.location='/ { proxy_pass https://192.168.100.1; } # Cable Modem'
+uci commit
+service nginx restart.
+```
+
+Yay!  Now if we go to ```https://modem.example.com```, we will see this:
+![modem.webp](/assets/img/router/modem.webp){: lqip="data:image/webp;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAAOABgDAREAAhEBAxEB/8QAFwABAAMAAAAAAAAAAAAAAAAAAQAGCP/EAB0QAAIBBAMAAAAAAAAAAAAAAAABAwYUUVMCBJH/xAAXAQEBAQEAAAAAAAAAAAAAAAAAAQUG/8QAGBEBAAMBAAAAAAAAAAAAAAAAAAESFBP/2gAMAwEAAhEDEQA/AN9OmlrOk1sHMFTS1jUZyqa46y6kzL9YR4Ri3lr0hLCPC8F5KQV0Y8InSSkP/9k="}
+
+----
+
 ## Basic WebDAV Server
 
 **WebDAV** is a set of extensions to HTTP that lets users edit and manage files directly on
@@ -372,5 +414,6 @@ We've still got a few things to add to our router...  Onwards to Part 5!
 - [Get a free HTTPS certificate from LetsEncrypt for OpenWrt with ACME.sh](https://openwrt.org/docs/guide-user/services/tls/acmesh)
 - [OpenWrt Wiki: Nginx webserver](https://openwrt.org/docs/guide-user/services/webserver/nginx)
 - [OpenWrt Wiki: WebDAV Share](https://openwrt.org/docs/guide-user/services/nas/webdav)
+- [OpenWrt Wiki: Accessing the modem through the router](https://openwrt.org/docs/guide-user/network/wan/access.modem.through.nat)
 - [NGINX WebDAV Module: Full File Sharing Server Setup](https://www.getpagespeed.com/server-setup/nginx/nginx-webdav-module)
 - [GitHub Repo: nginx-style-autoindex](https://github.com/julcap/nginx-style-autoindex)
