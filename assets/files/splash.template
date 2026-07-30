@@ -53,6 +53,7 @@
 			- Usage may be monitored
 		</p>
 		<a href="$authaction" class="accept-btn">Accept &amp; Connect</a>
+		<p class="terms">Gateway: $gatewayname &middot; Uptime: $uptime</p>
 	</div>
 </body>
 </html>

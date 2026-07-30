@@ -181,7 +181,7 @@ This page is ugly and basic.  Then again, maybe that's what the author was going
 Who knows....  Let's replace it:
 ```shell
 FILE=/etc/nodogsplash/htdocs/splash.html
-wget https://xptsp.github.io/assets/files/splash.html -O ${FILE}
+wget https://xptsp.github.io/assets/files/splash.template -O ${FILE}
 echo "${FILE}" >> /etc/sysupgrade.conf
 ```
 Now we get this:
