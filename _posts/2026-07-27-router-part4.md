@@ -405,7 +405,7 @@ domain, and a web server that encrypts everything.  Also AGH has been configured
 the same SSL certificate that NGINX does, and now has DNS-over-TLS (DoT) and DNS-over-HTTPS
 (DoH) support.
 
-We've still got a few things to add to our router...  Onwards to Part 5!
+We've still got a few things to add to our router...  [Onwards to Part 5!](http://localhost:4000/posts/router-part5/)
 
 ### Additional Information
 
