@@ -357,6 +357,10 @@ EOF
 echo "${FILE}" >> /etc/sysupgrade.conf
 ```
 
+Without the ```sub_filter``` lines in the configuration, ```http://openwrt.lan:8080``` will 
+look something like this:
+![webdav_before.webp](/assets/img/router/webdav_before.webp){: lqip="data:image/webp;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAAOABgDAREAAhEBAxEB/8QAFwABAAMAAAAAAAAAAAAAAAAAAwIECf/EABsQAAICAwEAAAAAAAAAAAAAAAABAgMRElEh/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/ANPqaNceAXK4YAVR6Aca0gESSAlr0D//2Q=="}
+
 We need to download a few css and js files for this to work and add them to the
 sysupgrade file list:
 ```shell
@@ -367,7 +371,11 @@ echo "${FILE}" >> /etc/sysupgrade.conf
 echo "${FILE/css/js}" >> /etc/sysupgrade.conf
 ```
 
-Let's define a HTTPS service that serves our WebDAV server:
+Making sure the ```sub_filter``` lines, as well as the css and js files are present, it 
+will look like this:
+![webdav.webp](/assets/img/router/webdav.webp){: lqip="data:image/webp;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAAOABgDAREAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAQIJ/8QAGBAAAwEBAAAAAAAAAAAAAAAAAAERAlH/xAAXAQEBAQEAAAAAAAAAAAAAAAABAAIG/8QAGBEBAQEBAQAAAAAAAAAAAAAAAAERIUH/2gAMAwEAAhEDEQA/ANFFmGXFrySI+mCLgIlowpUZDeP/2Q=="}
+
+Let's define a HTTPS service that serves our WebDAV server, and restart networking service.
 ```shell
 uci set nginx.https_webdav=server
 uci add_list nginx.https_webdav.listen='443 ssl'
@@ -381,21 +389,12 @@ uci set nginx.https_webdav.ssl_session_timeout='64m'
 uci set nginx.https_webdav.access_log='off; # logd openwrt'
 uci set nginx.https_webdav.location='/ { proxy_pass http://127.0.0.1:8080; } # WebDAV'
 uci commit
-```
-
-Finally, restart NGNIX:
-```shell
 service nginx restart
 ```
 
-When accessing ```http://openwrt.lan:8080/``` or ```https://webdav.example.com```,
-you should see something like this:
-![webdav.webp](/assets/img/router/webdav.webp){: lqip="data:image/webp;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAAOABgDAREAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAQIJ/8QAGBAAAwEBAAAAAAAAAAAAAAAAAAERAlH/xAAXAQEBAQEAAAAAAAAAAAAAAAABAAIG/8QAGBEBAQEBAQAAAAAAAAAAAAAAAAERIUH/2gAMAwEAAhEDEQA/ANFFmGXFrySI+mCLgIlowpUZDeP/2Q=="}
-instead of this:
-![webdav_before.webp](/assets/img/router/webdav_before.webp){: lqip="data:image/webp;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAAOABgDAREAAhEBAxEB/8QAFwABAAMAAAAAAAAAAAAAAAAAAwIECf/EABsQAAICAwEAAAAAAAAAAAAAAAABAgMRElEh/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/ANPqaNceAXK4YAVR6Aca0gESSAlr0D//2Q=="}
-
-Now, I'll be honest here.  I'm not sure how I'll use this here.  But I'm sure I'll
-figure something out...
+The new domain name is available at ```https://modem.example.com```!  Now, I'll be honest 
+here.  I'm not sure how I'll use this here.  But it's nice to have the option available,
+especially if we are going to bake this into the firmware...
 
 ----
 
