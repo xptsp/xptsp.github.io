@@ -285,7 +285,7 @@ grep -q dav_ext_lock_zone ${FILE} || sed -i "s|client_max_body_size 128M;|dav_ex
 ```
 
 Let's create our WebDAV server on port 8080, customizing the output so it looks
-better:
+better using css and js from [https://github.com/julcap/nginx-style-autoindex](https://github.com/julcap/nginx-style-autoindex):
 ```shell
 FILE=/etc/nginx/conf.d/pxeboot.conf
 cat << EOF > ${FILE}
@@ -365,3 +365,12 @@ the same SSL certificate that NGINX does, and now has DNS-over-TLS (DoT) and DNS
 (DoH) support.
 
 We've still got a few things to add to our router...  Onwards to Part 5!
+
+### Additional Information
+
+- [OpenWrt Wiki: DDNS client](https://openwrt.org/docs/guide-user/services/ddns/client)
+- [Get a free HTTPS certificate from LetsEncrypt for OpenWrt with ACME.sh](https://openwrt.org/docs/guide-user/services/tls/acmesh)
+- [OpenWrt Wiki: Nginx webserver](https://openwrt.org/docs/guide-user/services/webserver/nginx)
+- [OpenWrt Wiki: WebDAV Share](https://openwrt.org/docs/guide-user/services/nas/webdav)
+- [NGINX WebDAV Module: Full File Sharing Server Setup](https://www.getpagespeed.com/server-setup/nginx/nginx-webdav-module)
+- [GitHub Repo: nginx-style-autoindex](https://github.com/julcap/nginx-style-autoindex)
