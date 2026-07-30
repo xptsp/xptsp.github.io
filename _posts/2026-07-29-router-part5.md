@@ -1,6 +1,6 @@
 ---
 title: My Router - Part 5
-description: Guest WiFi and Tethered Phone Support
+description: Guest WiFi, Captive Portals, and Tethered Phone Support
 date: 2026-07-30 01:05:00 -0600
 categories: [Router]
 tags: [Router]
