@@ -21,7 +21,7 @@ for USB storage and file sharing and make our router even more awesome!
 OpenWRT doesn't come with all the USB device support built-in, so let's go ahead and install it on
 our router!
 ```shell
-apk add kmod-usb-storage kmod-usb-ohci kmod-usb-uhci kmod-usb2 usb-modeswitch
+apk add kmod-usb-storage kmod-usb-ohci kmod-usb-uhci kmod-usb2 usb-modeswitch kmod-usb-storage-uas
 ```
 
 Let's install filesystem kernel modules and tools to support EXT4, NTFS, EXFAT, and VFAT filesystems.
@@ -141,9 +141,9 @@ service nfsd restart
 
 ## PXE Boot Server
 
-PXE boot, or Preboot eXecution Environment boot, is a network-based booting process that allows 
-computers to start up using an operating system image retrieved from a server instead of local 
-storage. This method is particularly useful for deploying operating systems across multiple 
+PXE boot, or Preboot eXecution Environment boot, is a network-based booting process that allows
+computers to start up using an operating system image retrieved from a server instead of local
+storage. This method is particularly useful for deploying operating systems across multiple
 machines efficiently.
 
 First, let's enable and Configure TFTP in dnsmasq:
@@ -211,14 +211,14 @@ cd /tmp/syslinux-6.03
 cp efi64/com32/elflink/ldlinux/ldlinux.e64 bios/core/pxelinux.0 bios/com32/elflink/ldlinux/ldlinux.c32 bios/com32/menu/vesamenu.c32 bios/com32/lib/libcom32.c32 bios/com32/libutil/libutil.c32 /mnt/pxeboot/
 cp efi64/efi/syslinux.efi /mnt/pxeboot/syslinux64.efi
 cp efi32/efi/syslinux.efi /mnt/pxeboot/syslinux32.efi
-ln -sf /mnt/pxeboot/disks /mnt/pxeboot/pxelinux.cfg 
+ln -sf /mnt/pxeboot/disks /mnt/pxeboot/pxelinux.cfg
 ```
 
-Finally, we're going to add them to the list of files to back up, making sure to exclude the 
-```/mnt/pxeboot/disks``` directory.  The reason is that we don't need a backup of the files 
+Finally, we're going to add them to the list of files to back up, making sure to exclude the
+```/mnt/pxeboot/disks``` directory.  The reason is that we don't need a backup of the files
 in that partition in our OpenWrt configuration backup.  Yes, ```sysupgrade``` will try to include them!
 
-We want these files as part of the firmware, so it becomes a "once-and-done"-type thing for 
+We want these files as part of the firmware, so it becomes a "once-and-done"-type thing for
 setting up our PXE boot server.  You could say "Minimal time setting up the thing"...
 ```shell
 ls /mnt/pxeboot | grep -v disks | while read FILE; do echo /mnt/pxeboot/$FILE; done >> /etc/sysupgrade.conf
@@ -229,7 +229,7 @@ ls /mnt/pxeboot | grep -v disks | while read FILE; do echo /mnt/pxeboot/$FILE; d
 ## Summary
 
 Okay, we're done with file sharing programs...  Let's turn our attention to the program
-serving LUCI, rather, replacing UHTTPD with NGINX... 
+serving LUCI, rather, replacing UHTTPD with NGINX...
 
 ### Additional Information
 

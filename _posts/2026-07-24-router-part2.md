@@ -11,8 +11,8 @@ image:
   height: 190
 ---
 
-We created an acceptable factory-equivant router in [the first part of this journey](/posts/router-part1/), but I know we can do better!  
-So let's add some essential services to our router! 
+We created an acceptable factory-equivant router in [the first part of this journey](/posts/router-part1/), but I know we can do better!
+So let's add some essential services to our router!
 
 ---------
 
@@ -22,17 +22,17 @@ So let's add some essential services to our router!
 > and config apps.  They may or may not work on other architechitures.  You have been warned!
 {: .prompt-warning }
 
-First, we need to add the XPtsp OpenWrt repo to the mix.  
+First, we need to add the XPtsp OpenWrt repo to the mix.
 ```shell
 echo "https://xptsp.github.io/openwrt-repo/apk/aarch64_cortex-a53/packages.adb" >> /etc/apk/repositories.d/xptsp.list
 wget http://xptsp.github.io/openwrt-repo/apk/aarch64_cortex-a53/xptsp.pem -O /etc/apk/keys/xptsp.pem
 ```
 
 I frankly think the default theme for LUCI is terrible, so I'm installing a new theme.
-I'm also configuring the wallpaper to use the on-device background present in the 
+I'm also configuring the wallpaper to use the on-device background present in the
 theme package, as well as forcing dark mode:
 ```shell
-apk add luci-theme-argon luci-app-argon-config luci-lib-ipkg 
+apk add luci-theme-argon luci-app-argon-config luci-lib-ipkg
 uci set argon.@global[0].mode='dark'
 uci set argon.@global[0].online_wallpaper='none'
 uci commit
@@ -40,7 +40,7 @@ uci commit
 
 I'm also replacing the default login wallpaper:
 ```shell
-FILE=/www/luci-static/argon/img/router/bg1.jpg
+FILE=/www/luci-static/argon/img/bg1.jpg
 wget https://xptsp.github.io/assets/img/router/bg1.jpg -O ${FILE}
 echo "${FILE}" >> /etc/sysupgrade.conf
 ```
@@ -61,7 +61,7 @@ OpenWrt Status page screenshot using Argon theme:
 ## Network-wide Ad Blocking
 
 We need to install and configure AdGuardHome.  I am sharing my AGH configuration file,
-slighty modified to change the password held within. 
+slighty modified to change the password held within.
 ```shell
 apk add adguardhome luci-app-adguardhome
 wget https://xptsp.github.io/assets/files/adguardhome.yaml -O /etc/adguardhome/adguardhome.yaml
@@ -83,7 +83,7 @@ uci add_list dhcp.lan.dhcp_option='3,'"${NET_ADDR}"
 uci add_list dhcp.lan.dhcp_option='6,'"${NET_ADDR}"
 ```
 
-We need to set up the firewall rule to redirect all DNS requests (port 53) to 
+We need to set up the firewall rule to redirect all DNS requests (port 53) to
 the router.  This way, devices can't access other DNS services, bypassing AGH.
 ```shell
 uci -q del firewall.dns_int
@@ -98,7 +98,7 @@ uci set firewall.dns_int.dest_port='53'
 ```
 
 We also need to set up a firewall rule to block DNS-over-TLS (DoT - port 853).
-This is another way for devices to avoid using AGH. 
+This is another way for devices to avoid using AGH.
 ```shell
 uci set firewall.block_dot=rule
 uci set firewall.block_dot.name='Block DoT from LAN'
@@ -108,7 +108,7 @@ uci set firewall.block_dot.proto='tcp udp'
 uci set firewall.block_dot.dest_port='853'
 uci set firewall.block_dot.target='REJECT'
 ```
-  
+
 Now restart services so we can enjoy far less ads on our network!
 ```shell
 uci commit
@@ -118,13 +118,13 @@ service adguardhome restart
 ```
 
 The web address for the AGH on your router is ```http://openwrt.lan:3000/```
-(unless you've changed the hostname).  Username is **root**, password is **admin**.  
+(unless you've changed the hostname).  Username is **root**, password is **admin**.
 
 I highly recommend changing the username/password credentials.  I recommend reading the page at
-[https://github.com/AdguardTeam/AdGuardHome/wiki/Configuration#password-reset](https://github.com/AdguardTeam/AdGuardHome/wiki/Configuration#password-reset) 
+[https://github.com/AdguardTeam/AdGuardHome/wiki/Configuration#password-reset](https://github.com/AdguardTeam/AdGuardHome/wiki/Configuration#password-reset)
 for advice on how to do this.
 
-Restarting the **adguardhome** service after making changes to **/etc/adguardhome/adguardhome.yml** is 
+Restarting the **adguardhome** service after making changes to **/etc/adguardhome/adguardhome.yml** is
 necessary.
 
 ---------
@@ -132,7 +132,7 @@ necessary.
 ## Network-wide Network Time
 
 Let's enable the built-in NTP server for OpenWrt.  I'm in the **America/Chicago** timezone,
-so these settings are appropriate for me. 
+so these settings are appropriate for me.
 ```shell
 uci set system.ntp.enable_server='1'
 uci set system.@system[0].zonename='America/Chicago'
@@ -145,9 +145,9 @@ NET_ADDR=$(uci get network.lan.ipaddr | cut -d\/ -f 1)
 uci add_list dhcp.lan.dhcp_option="42,${NET_ADDR}"
 ```
 
-Let's configure firewall to force clients to use our NTP server.  According to Google, 
-```Redirecting NTP requests through a firewall is essential to ensure that internal devices 
-synchronize their time with a designated NTP server, rather than relying on potentially 
+Let's configure firewall to force clients to use our NTP server.  According to Google,
+```Redirecting NTP requests through a firewall is essential to ensure that internal devices
+synchronize their time with a designated NTP server, rather than relying on potentially
 unreliable external servers. This helps maintain network security and time accuracy across devices.```
 ```shell
 uci set firewall.ntp="redirect"
@@ -206,19 +206,6 @@ uci set luci-wol.shemp_pc.broadcast='1'
 ```
 ----
 
-## Tang
-
-Running a Tang server on OpenWrt allows you to set up Network-Bound Disk Encryption 
-(NBDE) using a lightweight router instead of a full Linux server.
-```shell
-apk add tang
-uci set tang.config.enabled='1'
-uci commit
-service tang restart
-```
-
-----
-
 ## Summary
 
 Now that we are done instaling some additional services on our router, let's install
@@ -230,4 +217,3 @@ USB support, as well as file sharing programs and a PXE Boot server.
 - [OpenWrt Wiki: AdGuard Home](https://openwrt.org/docs/guide-user/services/dns/adguard-home)
 - [OpenWrt Wiki: NTP Client / NTP Server](https://openwrt.org/docs/guide-user/services/ntp/client-server)
 - [OpenWrt Wiki: Wake-On-Lan](https://openwrt.org/docs/guide-user/services/w_o_l/wol)
-- [Network Bound Disk Encryption with clevis and tang on OpenWRT](https://zaage.it/tutorials/network-bound-disk-encryption-with-clevis-and-tang-on-openwrt/)

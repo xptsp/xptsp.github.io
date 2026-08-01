@@ -18,7 +18,7 @@ pin: true
 About 3 years ago, I purchased a [Linksys E8450 Router](https://www.amazon.com/dp/B08LMQLG7X)
 from Amazon.  I [did my research](https://openwrt.org/toh/linksys/e8450) and decided on this router
 because it was upgradable to OpenWrt.  Looked easy enough to upgrade...  Nervous as hell, though.
-After getting brave enough to modify my new toy, I executed the 
+After getting brave enough to modify my new toy, I executed the
 [OpenWRT upgrade instructions](https://openwrt.org/toh/linksys/e8450#how_to_convert_to_ubi_layout).
 I will not duplicate these instructions, as the linked page contains everything that is needed to
 upgrade this router to OpenWRT.  It is also meant to be done only once per device, and
@@ -54,7 +54,7 @@ ssh root@192.168.1.1
 
 ## Set the Root password
 
-Setting the root password prevents unauthorized access.  I'm going to set my root 
+Setting the root password prevents unauthorized access.  I'm going to set my root
 password to **MoeLarryCurly**.  Obviously, **DON'T** use this password for your machine.
 ```shell
 (echo MoeLarryCurly; echo MoeLarryCurly) | passwd
@@ -121,7 +121,7 @@ uci set network.lan.multipath='off'
 
 Gotta add our static IP assignments, so that my equipment ends up where I expect them
 to be.  And no, these are **NOT** my machine names!  (Notice a theme?)  I consider this
-to be part of a customized "basic" router setup, as I don't want to waste time trying to 
+to be part of a customized "basic" router setup, as I don't want to waste time trying to
 figure out where services actually are instead of where I wanted them to be.
 ```shell
 uci set dhcp.moe_pc=host
@@ -149,7 +149,7 @@ uci set dhcp.shemp_pc.mac='66:1C:C8:CC:AD:43'
 uci set dhcp.shemp_pc.ip='192.168.20.103'
 ```
 
-## Set DNS Provider to CloudFlare 
+## Set DNS Provider to CloudFlare
 
 We're changing my router's IPv4 and IPv6 DNS providers to CloudFlare:
 ```shell
@@ -204,7 +204,7 @@ uci commit
 
 We need a better shell than what busybox offers, so we're going to install **bash**, change
 the default shell for **root**, then upgrade **wget** to the full version that supports
-HTTPS.  We also need to download the bash initialization script, and create a dos-equivalant
+HTTPS.  We also need to download the bash initialization script, which has a dos-equivalant
 **cls** command using the built-in **clear** command:
 ```shell
 # Install bash, change default shell
@@ -215,9 +215,7 @@ sed -i "s|/bin/ash|/bin/bash|g" /etc/passwd
 # Download bash startup script:
 FILE=/root/.shinit
 wget https://xptsp.github.io/assets/files/bashrc.sh -O ${FILE}
-sed -i "s|32m|31m|" ${FILE}
 chmod +x ${FILE}
-echo "alias cls=clear" >> ${FILE}
 echo "${FILE}" >> /etc/sysupgrade.conf
 ```
 
@@ -243,6 +241,6 @@ What we've configured is is an acceptable factory-equivant router, sans possible
 support (unknown if factory firmware has this).  This is okay, but I know we can do
 better than factory-equivant router firmware!  After all, we installed OpenWRT!!!
 
-Once the router has rebooted, the new IP address is **192.168.20.1**...  
+Once the router has rebooted, the new IP address is **192.168.20.1**...
 
 We have more stuff we can install!  [Onwards!](https://xptsp.github.io/posts/router-part2/)

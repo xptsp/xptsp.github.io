@@ -106,7 +106,7 @@ querylog:
   dir_path: ""
   ignored:
     - '*.arpa'
-  interval: 90d
+  interval: 1d
   size_memory: 1000
   enabled: true
   ignored_enabled: false

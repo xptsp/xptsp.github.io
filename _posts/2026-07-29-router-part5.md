@@ -187,7 +187,7 @@ echo "${FILE}" >> /etc/sysupgrade.conf
 Now we get this:
 ![nodogsplash_after.webp](/assets/img/router/nodogsplash_after.webp){: lqip="data:image/webp;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAAOABgDAREAAhEBAxEB/8QAFwABAAMAAAAAAAAAAAAAAAAABQEECf/EABwQAAIDAAMBAAAAAAAAAAAAAAECAAQRAxIhMf/EABkBAAIDAQAAAAAAAAAAAAAAAAECAAMFB//EABcRAQEBAQAAAAAAAAAAAAAAAAEAEQL/2gAMAwEAAhEDEQA/AM+6iq+EzonXW2BzzldauvXclC1xE3UCQDRNooWT5G3YJkobBKfIEpsPf5id8is5f//Z"}
 IMHO, much better!  Naturally, the background and wifi symbol image is a SVG image, so
-replacing it in the ```splash.html``` is rather easy to do.  I got my background SVG file 
+replacing it in the ```splash.html``` is rather easy to do.  I got my background SVG file
 from [SVG Backgrounds](https://www.svgbackgrounds.com/set/free-svg-backgrounds-and-patterns/).
 
 You can customize this splash page to suit your needs, if desired.  Keep in mind that some
@@ -202,26 +202,26 @@ don't think it'll be hard to do, but I haven't worked on that aspect yet....
 ## Tethered Smart Phones
 
 > This section was built by following the steps listed in [Adding a second internet connection to a router with OpenWrt](https://dariusz.wieckiewicz.org/en/adding-second-internet-connection-router-openwrt/)
-> and copying the UCI entries made by LUCI as I was making these changes.  As of this writing, 
+> and copying the UCI entries made by LUCI as I was making these changes.  As of this writing,
 > I have not tested this configuration yet.
 {: .prompt-info }
 
 First, we need RNDIS support, which provides our router with the tools to work with a tethered phone.
 ```shell
-apk add kmod-usb-net-rndis kmod-usb-net-cdc-ether usb-modeswitch 
+apk add kmod-usb-net-rndis kmod-usb-net-cdc-ether usb-modeswitch
 ```
 
-We need to modify the WAN interface to have a metric of **10**:  
+We need to modify the WAN interface to have a metric of **10**:
 ```shell
 uci set network.wan.metric='10'
 uci set network.wan.multipath='off'
 ```
 
-We need to define our new **USB0** interface with a metric of **20**.  Note that this code block 
+We need to define our new **USB0** interface with a metric of **20**.  Note that this code block
 assumes that the interface name is ```usb0```.  If yours is different, change the interface name.
 ```shell
 uci set network.usb0=interface
-uci set network.usb0.ifname='usb0'
+uci set network.usb0.device='usb0'
 uci set network.usb0.proto='dhcp'
 uci set network.usb0.metric='20'
 uci set network.usb0.multipath='off'
@@ -232,12 +232,11 @@ We also need the MultiWAN support program and LUCI app:
 apk add luci-app-mwan3
 ```
 
-We need to get rid of all of the useless default interfaces (```wanb``` and ```wan6b```) in the 
-```Network > MultiWAN Manager > Interfaces``` tab.  No sense in making things look more complicated 
+We need to get rid of all of the useless default interfaces (```wanb``` and ```wan6b```) in the
+```Network > MultiWAN Manager > Interfaces``` tab.  No sense in making things look more complicated
 than they already are.  We also need to define the ```usb0``` interface for the MWAN3 scripts:
 ```shell
 uci show mwan3 | grep interface | cut -d\. -f 2 | cut -d= -f 1 | while read ID; do uci del mwan3.${ID}; done
-
 uci set mwan3.usb0=interface
 uci set mwan3.usb0.enabled='1'
 uci set mwan3.usb0.initial_state='online'
@@ -255,11 +254,10 @@ uci set mwan3.usb0.down='5'
 uci set mwan3.usb0.up='5'
 ```
 
-Let's clear out the confusing/useless entries in the ```Network > MultiWAN Manager > Members``` 
+Let's clear out the confusing/useless entries in the ```Network > MultiWAN Manager > Members```
 tab and define the new members for this tab:
 ```shell
 uci show mwan3 | grep member | cut -d\. -f 2 | cut -d= -f 1 | while read ID; do uci del mwan3.${ID}; done
-
 uci set mwan3.wan_m1_w1=member
 uci set mwan3.wan_m1_w1.interface='wan'
 uci set mwan3.wan_m1_w1.metric='1'
@@ -278,13 +276,12 @@ uci add_list mwan3.wan_usb0.use_member='usb0_m2_w2'
 uci set mwan3.wan_usb0.last_resort='unreachable'
 ```
 
-Let's clear out the confusing/useless entries in the ```Network > MultiWAN Manager > Rules``` 
+Let's clear out the confusing/useless entries in the ```Network > MultiWAN Manager > Rules```
 tab and define the default rule for this tab:
 ```shell
 uci del mwan3.default_rule_v4
 uci del mwan3.default_rule_v6
 uci del mwan3.https
-
 uci set mwan3.default=rule
 uci set mwan3.default.proto='all'
 uci set mwan3.default.sticky='0'
@@ -306,7 +303,7 @@ That should be all that is needed in order to make MWAN3 work with our tethered 
 ## Summary
 
 We have set up our Guest Wifi access points, as well as configured MWAN3 to deal with loss
-of internet on the WAN interface by using the USB0 interface when the smartphone is connected.  
+of internet on the WAN interface by using the USB0 interface when the smartphone is connected.
 
 Pretty sure we can still add things to our router!  [Onwards to Part 6!](http://localhost:4000/posts/router-part6/)
 

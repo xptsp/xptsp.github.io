@@ -220,17 +220,17 @@ uci set nginx.https_router.access_log='off; # logd openwrt'
 Since we install Adguard Home in the last part, let's define a HTTPS server serving
 Adguard Home (```https://webdav.example.com```).
 ```shell
-uci set nginx.https_webdav=server
-uci add_list nginx.https_webdav.listen='443 ssl'
-uci add_list nginx.https_webdav.listen='[::]:443 ssl'
-uci add_list nginx.https_webdav.include='restrict_locally'
-uci set nginx.https_webdav.server_name='webdav.'${DOMAIN}
-uci set nginx.https_webdav.ssl_certificate='/etc/acme/'${DOMAIN}'_ecc/'${DOMAIN}'.cer'
-uci set nginx.https_webdav.ssl_certificate_key='/etc/acme/'${DOMAIN}'_ecc/'${DOMAIN}'.key'
-uci set nginx.https_webdav.ssl_session_cache='shared:SSL:32k'
-uci set nginx.https_webdav.ssl_session_timeout='64m'
-uci set nginx.https_webdav.access_log='off; # logd openwrt'
-uci set nginx.https_webdav.location='/ { proxy_pass https://127.0.0.1:3001; } # webdav'
+uci set nginx.https_adguardhome=server
+uci add_list nginx.https_adguardhome.listen='443 ssl'
+uci add_list nginx.https_adguardhome.listen='[::]:443 ssl'
+uci add_list nginx.https_adguardhome.include='restrict_locally'
+uci set nginx.https_adguardhome.server_name='adguardhome.'${DOMAIN}
+uci set nginx.https_adguardhome.ssl_certificate='/etc/acme/'${DOMAIN}'_ecc/'${DOMAIN}'.cer'
+uci set nginx.https_adguardhome.ssl_certificate_key='/etc/acme/'${DOMAIN}'_ecc/'${DOMAIN}'.key'
+uci set nginx.https_adguardhome.ssl_session_cache='shared:SSL:32k'
+uci set nginx.https_adguardhome.ssl_session_timeout='64m'
+uci set nginx.https_adguardhome.access_log='off; # logd openwrt'
+uci set nginx.https_adguardhome.location='/ { proxy_pass http://127.0.0.1:3000; } # adguardhome'
 ```
 
 We'll define an default HTTP server that redirects HTTP requests to HTTPS:
@@ -278,6 +278,8 @@ uci set network.modem.proto="static"
 uci set network.modem.device="@wan"
 uci set network.modem.ipaddr="192.168.100.2"
 uci set network.modem.netmask="255.255.255.0"
+uci set network.modem.metric='100'
+uci set network.modem.multipath='off'
 uci commit network
 service network restart
 
@@ -291,7 +293,8 @@ Now it's available at ```http://192.168.100.1```.
 Since we installed NGINX in the last step, let's create an encrypted way to access it, too:
 ```shell
 uci set nginx.https_modem=server
-uci set nginx.https_modem.listen='443 ssl' '[::]:443 ssl'
+uci add_list nginx.https_modem.listen='443 ssl'
+uci add_list nginx.https_modem.listen='[::]:443 ssl'
 uci set nginx.https_modem.include='restrict_locally'
 uci set nginx.https_modem.server_name='modem.almostparadise.freeddns.org'
 uci set nginx.https_modem.ssl_certificate='/etc/acme/almostparadise.freeddns.org_ecc/almostparadise.freeddns.org.cer'
@@ -299,7 +302,7 @@ uci set nginx.https_modem.ssl_certificate_key='/etc/acme/almostparadise.freeddns
 uci set nginx.https_modem.ssl_session_cache='shared:SSL:32k'
 uci set nginx.https_modem.ssl_session_timeout='64m'
 uci set nginx.https_modem.access_log='off; # logd openwrt'
-uci set nginx.https_modem.location='/ { proxy_pass https://192.168.100.1; } # Cable Modem'
+uci set nginx.https_modem.location='/ { proxy_pass http://192.168.100.1; } # Cable Modem'
 uci commit
 service nginx restart.
 ```
@@ -357,7 +360,7 @@ EOF
 echo "${FILE}" >> /etc/sysupgrade.conf
 ```
 
-Without the ```sub_filter``` lines in the configuration, ```http://openwrt.lan:8080``` will 
+Without the ```sub_filter``` lines in the configuration, ```http://openwrt.lan:8080``` will
 look something like this:
 ![webdav_before.webp](/assets/img/router/webdav_before.webp){: lqip="data:image/webp;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAAOABgDAREAAhEBAxEB/8QAFwABAAMAAAAAAAAAAAAAAAAAAwIECf/EABsQAAICAwEAAAAAAAAAAAAAAAABAgMRElEh/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/ANPqaNceAXK4YAVR6Aca0gESSAlr0D//2Q=="}
 
@@ -371,7 +374,7 @@ echo "${FILE}" >> /etc/sysupgrade.conf
 echo "${FILE/css/js}" >> /etc/sysupgrade.conf
 ```
 
-Making sure the ```sub_filter``` lines, as well as the css and js files are present, it 
+Making sure the ```sub_filter``` lines, as well as the css and js files are present, it
 will look like this:
 ![webdav.webp](/assets/img/router/webdav.webp){: lqip="data:image/webp;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAAOABgDAREAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAQIJ/8QAGBAAAwEBAAAAAAAAAAAAAAAAAAERAlH/xAAXAQEBAQEAAAAAAAAAAAAAAAABAAIG/8QAGBEBAQEBAQAAAAAAAAAAAAAAAAERIUH/2gAMAwEAAhEDEQA/ANFFmGXFrySI+mCLgIlowpUZDeP/2Q=="}
 
@@ -392,7 +395,7 @@ uci commit
 service nginx restart
 ```
 
-The new domain name is available at ```https://modem.example.com```!  Now, I'll be honest 
+The new domain name is available at ```https://modem.example.com```!  Now, I'll be honest
 here.  I'm not sure how I'll use this here.  But it's nice to have the option available,
 especially if we are going to bake this into the firmware...
 

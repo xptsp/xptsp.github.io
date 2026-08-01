@@ -240,13 +240,6 @@ uci set luci-wol.shemp_pc.mac='66:1C:C8:CC:AD:43'
 uci set luci-wol.shemp_pc.iface='br-lan'
 uci set luci-wol.shemp_pc.broadcast='1'
 
-#####################################################################################
-# Tang
-apk add tang
-uci set tang.config.enabled='1'
-uci commit
-service tang restart
-
 #************************************************************************************
 #******************************* ROUTER SERIES: PART 3 ******************************
 #************************************************************************************
@@ -757,3 +750,85 @@ service nodogsplash restart
 FILE=/etc/nodogsplash/htdocs/splash.html
 wget https://xptsp.github.io/assets/files/splash.html -O /etc/nodogsplash/htdocs/splash.html
 echo "${FILE}" >> /etc/sysupgrade.conf
+
+#####################################################################################
+# Install MWAN3:
+#####################################################################################
+# Install RNDIS kernel modules:
+apk add kmod-usb-net-rndis kmod-usb-net-cdc-ether usb-modeswitch 
+
+# Modify the WAN interface to have a metric of 10:
+uci set network.wan.metric='10'
+uci set network.wan.multipath='off'
+
+# Define USB0 interface and set a metric of 20:
+uci set network.usb0=interface
+uci set network.usb0.ifname='usb0'
+uci set network.usb0.proto='dhcp'
+uci set network.usb0.metric='20'
+uci set network.usb0.multipath='off'
+
+# Install MWAN3 scripts and LUCI app:
+apk add luci-app-mwan3
+
+# Cleanup MWAN3 interface list and install our own:
+uci show mwan3 | grep interface | cut -d\. -f 2 | cut -d= -f 1 | while read ID; do uci del mwan3.${ID}; done
+uci set mwan3.usb0=interface
+uci set mwan3.usb0.enabled='1'
+uci set mwan3.usb0.initial_state='online'
+uci set mwan3.usb0.family='ipv4'
+uci set mwan3.usb0.track_method='ping'
+uci set mwan3.usb0.reliability='1'
+uci set mwan3.usb0.count='1'
+uci set mwan3.usb0.size='56'
+uci set mwan3.usb0.max_ttl='60'
+uci set mwan3.usb0.timeout='4'
+uci set mwan3.usb0.interval='10'
+uci set mwan3.usb0.failure_interval='5'
+uci set mwan3.usb0.recovery_interval='5'
+uci set mwan3.usb0.down='5'
+uci set mwan3.usb0.up='5'
+
+# Cleanup MWAN3 member list and install our own:
+uci show mwan3 | grep member | cut -d\. -f 2 | cut -d= -f 1 | while read ID; do uci del mwan3.${ID}; done
+uci set mwan3.wan_m1_w1=member
+uci set mwan3.wan_m1_w1.interface='wan'
+uci set mwan3.wan_m1_w1.metric='1'
+uci set mwan3.wan_m1_w1.weight='1'
+uci set mwan3.usb0_m2_w2=member
+uci set mwan3.usb0_m2_w2.interface='usb0'
+uci set mwan3.usb0_m2_w2.metric='2'
+uci set mwan3.usb0_m2_w2.weight='2'
+
+# Install our single MWAN3 policy:
+uci set mwan3.wan_usb0=policy
+uci add_list mwan3.wan_usb0.use_member='wan_m1_w1'
+uci add_list mwan3.wan_usb0.use_member='usb0_m2_w2'
+uci set mwan3.wan_usb0.last_resort='unreachable'
+
+# Cleanup MWAN3 rules list and install our own:
+uci del mwan3.default_rule_v4
+uci del mwan3.default_rule_v6
+uci del mwan3.https
+uci set mwan3.default=rule
+uci set mwan3.default.proto='all'
+uci set mwan3.default.sticky='0'
+uci set mwan3.default.use_policy='wan_usb0'
+
+# Commit all the changes and restart services:
+uci commit
+service mwan3 restart
+service network restart
+service firewall restart
+
+#************************************************************************************
+#******************************* ROUTER SERIES: PART 6 ******************************
+#************************************************************************************
+#####################################################################################
+# Tang
+#####################################################################################
+apk add tang
+uci set tang.config.enabled='1'
+uci commit
+service tang restart
+
