@@ -304,7 +304,7 @@ uci set nginx.https_modem.ssl_session_timeout='64m'
 uci set nginx.https_modem.access_log='off; # logd openwrt'
 uci set nginx.https_modem.location='/ { proxy_pass http://192.168.100.1; } # Cable Modem'
 uci commit
-service nginx restart.
+service nginx restart
 ```
 
 Yay!  Now if we go to ```https://modem.example.com```, we will see this:

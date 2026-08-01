@@ -1,6 +1,6 @@
 ---
 title: My Router - Part 5
-description: Guest WiFi, Captive Portals, and Tethered Phone Support
+description: Guest WiFi and Captive Portals
 date: 2026-07-30 01:05:00 -0600
 categories: [Router]
 tags: [Router]
@@ -199,111 +199,9 @@ don't think it'll be hard to do, but I haven't worked on that aspect yet....
 
 ----
 
-## Tethered Smart Phones
-
-> This section was built by following the steps listed in [Adding a second internet connection to a router with OpenWrt](https://dariusz.wieckiewicz.org/en/adding-second-internet-connection-router-openwrt/)
-> and copying the UCI entries made by LUCI as I was making these changes.  As of this writing,
-> I have not tested this configuration yet.
-{: .prompt-info }
-
-First, we need RNDIS support, which provides our router with the tools to work with a tethered phone.
-```shell
-apk add kmod-usb-net-rndis kmod-usb-net-cdc-ether usb-modeswitch
-```
-
-We need to modify the WAN interface to have a metric of **10**:
-```shell
-uci set network.wan.metric='10'
-uci set network.wan.multipath='off'
-```
-
-We need to define our new **USB0** interface with a metric of **20**.  Note that this code block
-assumes that the interface name is ```usb0```.  If yours is different, change the interface name.
-```shell
-uci set network.usb0=interface
-uci set network.usb0.device='usb0'
-uci set network.usb0.proto='dhcp'
-uci set network.usb0.metric='20'
-uci set network.usb0.multipath='off'
-```
-
-We also need the MultiWAN support program and LUCI app:
-```shell
-apk add luci-app-mwan3
-```
-
-We need to get rid of all of the useless default interfaces (```wanb``` and ```wan6b```) in the
-```Network > MultiWAN Manager > Interfaces``` tab.  No sense in making things look more complicated
-than they already are.  We also need to define the ```usb0``` interface for the MWAN3 scripts:
-```shell
-uci show mwan3 | grep interface | cut -d\. -f 2 | cut -d= -f 1 | while read ID; do uci del mwan3.${ID}; done
-uci set mwan3.usb0=interface
-uci set mwan3.usb0.enabled='1'
-uci set mwan3.usb0.initial_state='online'
-uci set mwan3.usb0.family='ipv4'
-uci set mwan3.usb0.track_method='ping'
-uci set mwan3.usb0.reliability='1'
-uci set mwan3.usb0.count='1'
-uci set mwan3.usb0.size='56'
-uci set mwan3.usb0.max_ttl='60'
-uci set mwan3.usb0.timeout='4'
-uci set mwan3.usb0.interval='10'
-uci set mwan3.usb0.failure_interval='5'
-uci set mwan3.usb0.recovery_interval='5'
-uci set mwan3.usb0.down='5'
-uci set mwan3.usb0.up='5'
-```
-
-Let's clear out the confusing/useless entries in the ```Network > MultiWAN Manager > Members```
-tab and define the new members for this tab:
-```shell
-uci show mwan3 | grep member | cut -d\. -f 2 | cut -d= -f 1 | while read ID; do uci del mwan3.${ID}; done
-uci set mwan3.wan_m1_w1=member
-uci set mwan3.wan_m1_w1.interface='wan'
-uci set mwan3.wan_m1_w1.metric='1'
-uci set mwan3.wan_m1_w1.weight='1'
-uci set mwan3.usb0_m2_w2=member
-uci set mwan3.usb0_m2_w2.interface='usb0'
-uci set mwan3.usb0_m2_w2.metric='2'
-uci set mwan3.usb0_m2_w2.weight='2'
-```
-
-Let's define the single policy in ```Network > MultiWAN Manager > Policy``` tab:
-```shell
-uci set mwan3.wan_usb0=policy
-uci add_list mwan3.wan_usb0.use_member='wan_m1_w1'
-uci add_list mwan3.wan_usb0.use_member='usb0_m2_w2'
-uci set mwan3.wan_usb0.last_resort='unreachable'
-```
-
-Let's clear out the confusing/useless entries in the ```Network > MultiWAN Manager > Rules```
-tab and define the default rule for this tab:
-```shell
-uci del mwan3.default_rule_v4
-uci del mwan3.default_rule_v6
-uci del mwan3.https
-uci set mwan3.default=rule
-uci set mwan3.default.proto='all'
-uci set mwan3.default.sticky='0'
-uci set mwan3.default.use_policy='wan_usb0'
-```
-
-Finally, we'll commit all the changes and restart the necessary services:
-```shell
-uci commit
-service mwan3 restart
-service network restart
-service firewall restart
-```
-
-That should be all that is needed in order to make MWAN3 work with our tethered smartphone.
-
-----
-
 ## Summary
 
-We have set up our Guest Wifi access points, as well as configured MWAN3 to deal with loss
-of internet on the WAN interface by using the USB0 interface when the smartphone is connected.
+We have set up our Guest Wifi access points, plus a nifty looking captive portal!
 
 Pretty sure we can still add things to our router!  [Onwards to Part 6!](http://localhost:4000/posts/router-part6/)
 
@@ -312,5 +210,3 @@ Pretty sure we can still add things to our router!  [Onwards to Part 6!](http://
 - [OpenWrt Wiki: Guest Wi-Fi basics](https://openwrt.org/docs/guide-user/network/wifi/guestwifi/guest-wlan)
 - [OpenWrt Wiki: NoDogSplash Captive Portal](https://openwrt.org/docs/guide-user/services/captive-portal/nodogsplash)
 - [OpenWRT Wiki: Use RNDIS USB Dongle for WAN connection](https://openwrt.org/docs/guide-user/network/wan/wwan/ethernetoverusb_rndis)
-- [OpenWrt Wiki: mwan3 (iptables)](https://openwrt.org/docs/guide-user/network/wan/multiwan/mwan3)
-- [Adding a second internet connection to a router with OpenWrt](https://dariusz.wieckiewicz.org/en/adding-second-internet-connection-router-openwrt/)
