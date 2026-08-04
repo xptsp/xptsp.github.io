@@ -11,9 +11,7 @@ image:
   height: 190
 ---
 
-We're going to set up our Guest wifi, NoDogSplash as our captive portal, and install RNDIS
-support so that we can connect our phone to the router so we have internet access when the
-WAN device goes down.
+We're going to set up our Guest wifi, as well as NoDogSplash as our captive portal.
 
 Let's get to it!
 
