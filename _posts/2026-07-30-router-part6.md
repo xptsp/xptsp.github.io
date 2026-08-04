@@ -111,7 +111,7 @@ service dnsmasq restart
 Peanut is a bash script that I wrote which sorts the IP address:port combos by ports for all
 services that are listening via TCP.  Here is a screenshot of the output of the script, which
 lists the services running on my router at this point in time:
-![/assets/img/router/peanut.webp](/assets/img/router/peanut.webp){: lqip="data:image/webp;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAANABgDAREAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAQIDCP/EABoQAAMBAQEBAAAAAAAAAAAAAAABAgNhEVH/xAAYAQADAQEAAAAAAAAAAAAAAAAAAQQCA//EABYRAQEBAAAAAAAAAAAAAAAAAAAREv/aAAwDAQACEQMRAD8AwLe/S7Keo1qvo8lQWnQydRq2dZGCumwgGX6KB//Z"}
+![/assets/img/router/peanut.webp](/assets/img/router/peanut.webp){: lqip="data:image/webp;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAANABgDAREAAhEBAxEB/8QAGAAAAgMAAAAAAAAAAAAAAAAAAAIDBAj/xAAaEAADAQEBAQAAAAAAAAAAAAAAAQIDURJh/8QAGAEBAQEBAQAAAAAAAAAAAAAAAAEEAgP/xAAWEQEBAQAAAAAAAAAAAAAAAAAAERL/2gAMAwEAAhEDEQA/AMD3uum7LPUNbLpcpROv0ZWqz0Z6xwX2wHmmIP/Z"}
 
 If you don't have the XPtsp repository installed, [go here](/posts/router-part2/#customize-luci) and
 add it before executing this next command.  Let's install it:
