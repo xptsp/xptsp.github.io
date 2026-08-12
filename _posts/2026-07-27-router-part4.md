@@ -150,11 +150,10 @@ have to configure firewall to allow port 853 through:
 ```shell
 uci -q del firewall.dot
 uci set firewall.dot="rule"
-uci set firewall.dot.family='any'
 uci set firewall.dot.name='Allow-DoT'
 uci set firewall.dot.src='wan'
 uci set firewall.dot.dest_port='853'
-uci set firewall.dot.proto='udp'
+uci add_list firewall.dot.proto='tcp'
 uci set firewall.dot.target='ACCEPT'
 uci commit
 service firewall restart
