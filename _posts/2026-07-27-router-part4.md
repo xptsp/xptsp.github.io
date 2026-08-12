@@ -400,6 +400,40 @@ especially if we are going to bake this into the firmware...
 
 ----
 
+## Adding a 403 error handler to NGINX
+
+![Gandalf](https://xptsp.github.io/assets/img/router/gandalf.webp){: lqip="data:image/webp;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAAOABgDAREAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAwn/xAAZEAADAQEBAAAAAAAAAAAAAAAAAQIRAxP/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8AlrzaAfVgAdGgDisAT0YB3Wgf/9k="}
+
+I've minified my version of the (IMHO: silly) error 403 html page from
+[CodePen](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://codepen.io/anjanas_dh/pen/ZMqKwb&ved=2ahUKEwiKnJ6Bw5uWAxWN4skDHUKHIzwQFnoECCMQAQ&usg=AOvVaw0g-_P-8LUBizQNCQoDnTkj).
+Let's download it for our router:
+```shell
+FILE=/www/error_403.html
+wget https://xptsp.github.io/assets/router/error_403.template -O ${FILE}
+echo ${FILE} >> /etc/sysupgrade.conf
+```
+
+We also need a 403 error handler block for NGINX.  It converts any 403 error into a 404 error:
+```shell
+FILE=/www/nginx/conf.d/error_403.locations
+cat << EOF > ${FILE}
+error_page 403 =404 /error_403.html;
+location = /error_403.html {
+	root /www;
+	allow all;
+	internal;
+}
+echo ${FILE} >> /etc/sysupgrade.conf
+EOF
+```
+
+Restart NGINX for it to show up when unauthorized access occurs:
+```shell
+service nginx restart
+```
+
+----
+
 ## Summary
 
 Now we've got a router that automatically associates its WAN IP address with a dynamic DNS

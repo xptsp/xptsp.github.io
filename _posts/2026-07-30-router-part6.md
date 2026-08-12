@@ -1,6 +1,6 @@
 ---
 title: My Router - Part 6
-description: Tang, DropBear mods, VLMCSD, Peanut and ZRAM Swap
+description: Tang, VLMCSD, Peanut and ZRAM Swap
 date: 2026-07-30 12:05:00 -0600
 categories: [Router]
 tags: [Router]
@@ -10,6 +10,9 @@ image:
   width: 190
   height: 190
 ---
+
+> Apologies.  Dropbear mods have been moved to Part 8 of this series for better organization.
+{: .prompt-tip }
 
 ## Tang
 
@@ -41,56 +44,6 @@ Let's fix this:
 ```shell
 apk add openssh-sftp-server
 ```
-
-----
-
-## Fixing DropBear Passwordless Access
-
-It seems that ```ssh-copy-id``` fails because it appends to ```$HOME/.ssh/authorized_keys```
-instead of ```/etc/dropbear/authorized_keys```.  We can fix this by symlinking the two files
-so that ```ssh-copy-id``` will work properly:
-```shell
-mkdir -p /root/.ssh
-ln -sf /etc/dropbear/authorized_keys /root/.ssh/authorized_keys
-echo "/root/.ssh/authorized_keys" >> /etc/sysupgrade.conf
-```
-
-----
-
-## SSH Passwordless access from Guest Network
-
-Using passwordless SSH access (key-based authentication) over the guest network stops 
-brute-force password hacks and makes logging in safer and easier.  It uses math keys
-instead of typed words.
-
-Why Use Passwordless SSH:
-- No Brute-Force Risks: “Since there is no password to guess, attackers cannot perform
-brute-force attacks to gain access,” as explained by [Portnox](https://www.portnox.com/cybersecurity-101/authentication/ssh-passwordless-login/).
-- Stronger Security: Cryptographic key pairs (like Ed25519) are much longer and harder to
-break than standard human-typed words.
-- Stops Phishing: You never type a secret word on a fake login page, which removes the risk
-of credential theft.
-
-Let's change the DropBear configuration to block password logins on our Guest network and 
-allow on LAN network:
-```shell
-uci set dropbear.@dropbear[0]=dropbear
-uci set dropbear.@dropbear[0].PasswordAuth='on'
-uci set dropbear.@dropbear[0].RootPasswordAuth='on'
-uci set dropbear.@dropbear[0].Interface='lan'
-
-uci set dropbear.@dropbear[1]=dropbear
-uci set dropbear.@dropbear[1].Interface='guest'
-uci set dropbear.@dropbear[1].RootPasswordAuth='off'
-uci set dropbear.@dropbear[1].PasswordAuth='off'
-uci commit
-service dropbear restart
-```
-You should be able to log in to your router using the Guest network, but only if you have
-install your SSH public key on the router.  Once again, note that using passwords is 
-disabled on the guest network, but not on the main network.
-
-This may seem useless, but it will have a use in a future part of this series....
 
 ----
 
@@ -136,13 +89,11 @@ apk add zram-swap
 
 ## Summary
 
-We've managed to increase the functionality of our router.  Is there anything else we can do?
+We've managed to increase the functionality of our router. Is there anything else we can do?
 
 ### Additional Information
 
 - [Network Bound Disk Encryption with clevis and tang on OpenWRT](https://zaage.it/tutorials/network-bound-disk-encryption-with-clevis-and-tang-on-openwrt/)
 - [OpenWrt Wiki: SFTP server](https://openwrt.org/docs/guide-user/services/nas/sftp.server)
-- [Passwordless SSH Setup for OpenWrt with Dropbear](https://www.systutorials.com/how-to-passwordless-ssh-to-an-openwrt-router/)
-- [How Does SSH Passwordless Login Work?](https://www.portnox.com/cybersecurity-101/authentication/ssh-passwordless-login/)
 - [GitHub: vlmcsd package for OpenWRT](https://github.com/xptsp/openwrt-vlmcsd)
 - [GitHub: Peanut package for OpenWRT](https://github.com/xptsp/openwrt-peanut)

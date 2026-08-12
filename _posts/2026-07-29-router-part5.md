@@ -11,7 +11,8 @@ image:
   height: 190
 ---
 
-We're going to set up our Guest wifi, as well as NoDogSplash as our captive portal.
+We're going to set up our Guest wifi, as well as NoDogSplash as our captive portal.  As a bonus,
+we will replace the boring (IMHO) splash page for something more modern and interesting...
 
 Let's get to it!
 
