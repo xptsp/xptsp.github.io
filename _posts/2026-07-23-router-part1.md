@@ -164,7 +164,7 @@ uci add_list network.wan6.dns="2606:4700:4700::1111"
 uci add_list network.wan6.dns="2606:4700:4700::1001"
 ```
 
-## Static IP Addresses
+## LAN Routes for IoT IP Ranges
 
 Computer **Larry** is a Raspberry Pi with 2 access points.  Since they are not a part of
 the planned network for **THIS** router, we have to add routing for those devices so I can
@@ -179,6 +179,15 @@ uci add network route
 uci set network.@route[-1].interface='lan'
 uci set network.@route[-1].target='192.168.5.0/24'
 uci set network.@route[-1].gateway='192.168.20.101'
+```
+
+Without the masquerade setting for the ``lan`` zone, any attempt to access these IP addresses will 
+fail.  We need to enable the masquerade setting for the ```lan``` zone.  I also want to name the
+```lan``` and ```wan``` zones in the network configuration for easy of reference.
+```shell
+uci set network.@zone[0]='lan'
+uci set network.@zone[1]='wan'
+uci set network.lan.masq=1
 ```
 
 ## Other Small Settings

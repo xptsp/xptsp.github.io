@@ -125,7 +125,7 @@ key, and change ownership and permissions:
 ```shell
 chown root:adguardhome /etc/acme/*/*.key
 chmod 640 /etc/acme/*/*.key
-uci add_list adguardhome.config.jail_mount='/etc/acme/'${DOMAIN}'_ecc/'
+uci add_list adguardhome.config.jail_mount='/etc/acme/'
 uci commit
 ```
 
@@ -415,7 +415,7 @@ echo ${FILE} >> /etc/sysupgrade.conf
 
 We also need a 403 error handler block for NGINX.  It converts any 403 error into a 404 error:
 ```shell
-FILE=/www/nginx/conf.d/error_403.locations
+FILE=/etc/nginx/conf.d/error_403.locations
 cat << EOF > ${FILE}
 error_page 403 =404 /error_403.html;
 location = /error_403.html {
@@ -423,8 +423,8 @@ location = /error_403.html {
 	allow all;
 	internal;
 }
-echo ${FILE} >> /etc/sysupgrade.conf
 EOF
+echo ${FILE} >> /etc/sysupgrade.conf
 ```
 
 Restart NGINX for it to show up when unauthorized access occurs:
