@@ -61,7 +61,7 @@ sed -i "s|443 ssl|8443 ssl proxy_protocol|g" /etc/config/nginx
 
 We need to add a new configuration file under ```/etc/nginx/conf.d```:
 ```shell
-FILE=/etc/nginx/conf.d/misc.conf
+FILE=/etc/nginx/conf.d/stream.conf
 cat << EOF > ${FILE}
 set_real_ip_from  127.0.0.1;
 real_ip_header    proxy_protocol;
@@ -86,38 +86,13 @@ stream {
 	ssl_preread on;
 	map_hash_bucket_size 128;
 
-	upstream ssh {
-		server 127.0.0.1:8022;
-	}
-	upstream tls_router {
-		server 127.0.0.1:8443;
-	}
-	upstream tls_moe {
-		server 192.168.20.100:443;
-	}
-	upstream tls_larry {
-		server 192.168.20.101:443;
-	}
-	upstream tls_default {
-		server 127.0.0.1:8443;	# <= Change to OpenVPN server block at port 8194 if desired
-	}
-
 	map \$ssl_preread_protocol \$upstream_backend {
-		"TLSv1.0"       \$host;
-		"TLSv1.1"       \$host;
-		"TLSv1.2"       \$host;
-		"TLSv1.3"       \$host;
-		default         ssh;
+		"TLSv1.0"       127.0.0.1:8443;
+		"TLSv1.1"       127.0.0.1:8443;
+		"TLSv1.2"       127.0.0.1:8443;
+		"TLSv1.3"       127.0.0.1:8443;
+		default         127.0.0.1:8022;
 	}
-	map \$ssl_preread_server_name \$host {
-		"openwrt"             tls_router;
-		"openwrt.lan"         tls_router;
-		"router.example.com"  tls_router;
-		"moe.example.com"     tls_moe;
-		"larry.example.com"   tls_larry;
-		default               tls_default;
-	}
-
 	server {
 		listen 443;
 		proxy_protocol on;
@@ -152,50 +127,7 @@ service firewall restart
 
 ----
 
-## What The Stream Block Does
-
-### <u>Upstream definitions</u>
-- ```upstream ssh``` points to our passwordless SSH server at **127.0.0.1:8022**.
-- ```upstream tls_router``` points to our alternative port HTTPS stack on **port 8443**.
-- ```upstream tls_moe``` points to our PC with hostname **moe** at **192.168.20.100:443**.
-- ```upstream tls_larry``` points to our PC with hostname **larry** at **192.168.20.101:443**.
-- ```upstream tls_default``` points to our alternative port HTTPS stack on **port 8443**.
-
-### <u>Map blocks</u>
-- First map contains protocol detection.  Protocols beginning with ``TLSv1.`` gets directed to second
-map.  No protocol detected gets directed to ```upstream ssh```.
-
-- Second map contains routing for proxy server destination based on SNI (Server Name Indication).
-No recognized SNI means it gets directed to ```upstream tls_default```, which points to the same
-destination as ```upstream tls_router```.
-
-### <u>Server blocks</u>
-- First block listens to **port 443**, passing control to the specified proxy server. Note
-that ``proxy_protocol on`` is set, preserving client IP address for the receiving server.
-
-- Second block listens to **127.0.0.1 port 8022** with ```proxy_protocol off```, which **DOES NOT**
-pass the client IP address to the proxy server, enabling SSH to work properly.  It proxies to 
-**192.168.3.1:22**, which is the passwordless SSH server we set up earlier in this post.
-
-----
-
 ## <u>Special Notes</u>
-
-- OpenVPN should be able to be added by adding a new server block with a new port number
-(aka ```127.0.0.1:8194```), like so:
-```
-	server {
-		listen 127.0.0.1:8194 proxy_protocol;
-		proxy_pass 127.0.0.1:1194;
-		proxy_protocol off;  # << DO NOT CHANGE!  Breaks OpenVPN if you do! >>
-	}
-```
-Also, ```upstream tls_default``` must be changed to point to the IP/port of your new server block, like so:
-```
-	upstream tls_default {
-		server 127.0.0.1:8194;	# OpenVPN server
-	}
-```
 
 - Hostnames are not recommended to be used within the ```stream``` block.  Some of the articles
 that I've read seem to indicate that NGNIX doesn't resolve hostnames inside the ```stream``` block.  I
@@ -220,9 +152,6 @@ outside our network, thus protecting our router setup from outside interference.
 
 SSH from the internet is protected by cryptographic public-private key pairs and does not
 accept passwords, while leaving the in-network SSH able to log in using passwords.
-
-OpenVPN on TCP ports should work, but this hasn't been tested as of this time since I have a 
-WireGuard VPN configuration.
 
 ### Additional Information
 

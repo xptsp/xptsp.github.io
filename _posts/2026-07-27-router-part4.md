@@ -117,57 +117,6 @@ echo "/etc/hotplug.d/acme/00-nginx" >> /etc/sysupgrade.conf
 
 ----
 
-## AdGuardHome using SSL certificate
-
-Since we installed AdGuardHome (AGH) in part 2 of this series, we need to add the
-directory to the jail mounts so the AGH can actually read the certificate and
-key, and change ownership and permissions:
-```shell
-chown root:adguardhome /etc/acme/*/*.key
-chmod 640 /etc/acme/*/*.key
-uci add_list adguardhome.config.jail_mount='/etc/acme/'
-uci commit
-```
-
-Now, we need to modify the AGH configuration file to enable the services:
-```shell
-FILE=/etc/adguardhome/adguardhome.yaml
-sed -i "s|server_name: .*|server_name: ${DOMAIN}|g" ${FILE}
-sed -i "s|certificate_path: .*|certificate_path: /etc/acme/${DOMAIN}_ecc/fullchain.cer|g" ${FILE}
-sed -i "s|private_key_path: .*|private_key_path: /etc/acme/${DOMAIN}_ecc/${DOMAIN}.key|g" ${FILE}
-sed -i "s|port_https: .*|port_https: 3001|g" ${FILE}
-sed -i '/^tls:/{n;s/.*/  enabled: true/}' ${FILE}
-```
-
-Finally, we need to restart webdav so it can listen for DNS requests from
-DNS-over-TLS (DoT) and DNS-over-HTTPS (DoH).
-```
-service adguardhome restart
-```
-
-If access to your DoT server from outside your intranet is desired, then we
-have to configure firewall to allow port 853 through:
-```shell
-uci -q del firewall.dot
-uci set firewall.dot="rule"
-uci set firewall.dot.name='Allow-DoT'
-uci set firewall.dot.src='wan'
-uci set firewall.dot.dest_port='853'
-uci add_list firewall.dot.proto='tcp'
-uci set firewall.dot.target='ACCEPT'
-uci commit
-service firewall restart
-```
-
-Now AGH is available at ```https://router.example.com:3001```, fully excrypted!
-Note that ```https://openwrt.lan:3001``` will give errors, but that's because the name
-in the SSL certificate doesn't match the hostname used.  Can we fix that?  Nope, no way
-to build a SSL certificate through Let's Encrypt for this domain name....
-
-Now, we don't wanna remember port numbers, do we?  We can do better than this!
-
-----
-
 ## Replace UHTTPD with NGINX
 
 Let's remove UHTTPD from the router and install NGINX.  It's going to be necessary to
@@ -251,10 +200,10 @@ uci set nginx.http_router.server_name='openwrt.lan openwrt.local openwrt'
 uci set nginx.http_router.return='302 https://router.'${DOMAIN}'$request_uri'
 ```
 
-I needed to patch the nginx template so that long domain names are handled properly:
+I needed to add a line to the nginx configuration so that long domain names are handled properly:
 ```shell
-FILE=/etc/nginx/uci.conf.template
-grep -q server_names_hash_bucket_size ${FILE} || sed -i "s|client_max_body_size 128M;|client_max_body_size 128M;\n        server_names_hash_bucket_size 128;|g" ${FILE}
+FILE=/etc/nginx/conf.d/server_names_hash_bucket_size.conf
+echo "server_names_hash_bucket_size 128;" > ${FILE}
 echo "${FILE}" >> /etc/sysupgrade.conf
 ```
 
@@ -263,51 +212,6 @@ Let's commit our changes and restart NGINX:
 uci commit
 service nginx restart
 ```
-
-----
-
-## Linksys Cable Modem Access
-
-I have a [Linksys CM3008 Cable Modem](https://www.amazon.com/dp/B01DACQMH4?lv=shuf&channelId=500&plpRedirect=mhFallback).
-On occasion, I need access to my cable modem's admin access page.  Here's how I accomplished it:
-```shell
-uci -q del network.modem
-uci set network.modem="interface"
-uci set network.modem.proto="static"
-uci set network.modem.device="@wan"
-uci set network.modem.ipaddr="192.168.100.2"
-uci set network.modem.netmask="255.255.255.0"
-uci set network.modem.metric='100'
-uci set network.modem.multipath='off'
-uci commit network
-service network restart
-
-uci del_list firewall.@zone[1].network="modem"
-uci add_list firewall.@zone[1].network="modem"
-uci commit firewall
-service firewall restart
-```
-Now it's available at ```http://192.168.100.1```.
-
-Since we installed NGINX in the last step, let's create an encrypted way to access it, too:
-```shell
-uci set nginx.https_modem=server
-uci add_list nginx.https_modem.listen='443 ssl'
-uci add_list nginx.https_modem.listen='[::]:443 ssl'
-uci set nginx.https_modem.include='restrict_locally'
-uci set nginx.https_modem.server_name='modem.'${DOMAIN}
-uci set nginx.https_modem.ssl_certificate='/etc/acme/almostparadise.freeddns.org_ecc/almostparadise.freeddns.org.cer'
-uci set nginx.https_modem.ssl_certificate_key='/etc/acme/almostparadise.freeddns.org_ecc/almostparadise.freeddns.org.key'
-uci set nginx.https_modem.ssl_session_cache='shared:SSL:32k'
-uci set nginx.https_modem.ssl_session_timeout='64m'
-uci set nginx.https_modem.access_log='off; # logd openwrt'
-uci set nginx.https_modem.location='/ { proxy_pass http://192.168.100.1; } # Cable Modem'
-uci commit
-service nginx restart
-```
-
-Yay!  Now if we go to ```https://modem.example.com```, we will see this:
-![modem.webp](/assets/img/router/modem.webp){: lqip="data:image/webp;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAAOABgDAREAAhEBAxEB/8QAFwABAAMAAAAAAAAAAAAAAAAAAQAGCP/EAB0QAAIBBAMAAAAAAAAAAAAAAAABAwYUUVMCBJH/xAAXAQEBAQEAAAAAAAAAAAAAAAAAAQUG/8QAGBEBAAMBAAAAAAAAAAAAAAAAAAESFBP/2gAMAwEAAhEDEQA/AN9OmlrOk1sHMFTS1jUZyqa46y6kzL9YR4Ri3lr0hLCPC8F5KQV0Y8InSSkP/9k="}
 
 ----
 
@@ -322,10 +226,11 @@ We need to install the NGINX DAV extensions module first:
 apk add nginx-mod-dav-ext
 ```
 
-We need to patch the original nginx template to add a directive:
+I needed to add a line to the nginx configuration so that long domain names are handled properly --AGAIN--:
 ```shell
-FILE=/etc/nginx/uci.conf.template
-grep -q dav_ext_lock_zone ${FILE} || sed -i "s|client_max_body_size 128M;|dav_ext_lock_zone zone=dav_locks:10m;\n        client_max_body_size 128M;|g" ${FILE}
+FILE=/etc/nginx/conf.d/dav_ext_lock_zone.conf
+echo "dav_ext_lock_zone zone=dav_locks:10m;" > ${FILE}
+echo "${FILE}" >> /etc/sysupgrade.conf
 ```
 
 Let's create our WebDAV server on port 8080, customizing the output so it looks
@@ -409,7 +314,7 @@ I've minified my version of the (IMHO: silly) error 403 html page from
 Let's download it for our router:
 ```shell
 FILE=/www/error_403.html
-wget https://xptsp.github.io/assets/router/error_403.template -O ${FILE}
+wget https://xptsp.github.io/assets/files/error_403.template -O ${FILE}
 echo ${FILE} >> /etc/sysupgrade.conf
 ```
 
@@ -449,6 +354,5 @@ We've still got a few things to add to our router...  [Onwards to Part 5!](http:
 - [Get a free HTTPS certificate from LetsEncrypt for OpenWrt with ACME.sh](https://openwrt.org/docs/guide-user/services/tls/acmesh)
 - [OpenWrt Wiki: Nginx webserver](https://openwrt.org/docs/guide-user/services/webserver/nginx)
 - [OpenWrt Wiki: WebDAV Share](https://openwrt.org/docs/guide-user/services/nas/webdav)
-- [OpenWrt Wiki: Accessing the modem through the router](https://openwrt.org/docs/guide-user/network/wan/access.modem.through.nat)
 - [NGINX WebDAV Module: Full File Sharing Server Setup](https://www.getpagespeed.com/server-setup/nginx/nginx-webdav-module)
 - [GitHub Repo: nginx-style-autoindex](https://github.com/julcap/nginx-style-autoindex)

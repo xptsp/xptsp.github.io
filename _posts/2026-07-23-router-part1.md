@@ -1,5 +1,5 @@
 ---
-title: My Router
+title: My Router - Part 1
 description: Beginning the Customization of OpenWrt on my Router!
 date: 2026-07-23 02:08:00 -0600
 categories: [Router]
