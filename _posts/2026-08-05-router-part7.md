@@ -162,6 +162,13 @@ uci set firewall.lan_untrusted.src="lan"
 uci set firewall.lan_untrusted.dest="untrusted"
 ```
 
+Let's commit our changes and restart affected services:
+```shell
+uci commit
+service network restart
+service firewall restart
+```
+
 -----
 
 ## Multiple Wireguard Proxy (MWGP)
@@ -222,7 +229,10 @@ uci commit
 
 ## Summary
 
-Meh
+Yay!  We've got a trusted wireguard server for Android phones, plus an untrusted wireguard server
+for devices that I want to keep tabs on if they ever disappear, then get connected to the internet....
+
+What else can we do?
 
 ### Additional Information
 

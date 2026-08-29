@@ -10,30 +10,7 @@ image:
   width: 190
   height: 190
 force_url: /tags/router/
-pin: true
 ---
-
-## The Purchase
-
-About 3 years ago, I purchased a [Linksys E8450 Router](https://www.amazon.com/dp/B08LMQLG7X)
-from Amazon.  I [did my research](https://openwrt.org/toh/linksys/e8450) and decided on this router
-because it was upgradable to OpenWrt.  Looked easy enough to upgrade...  Nervous as hell, though.
-After getting brave enough to modify my new toy, I executed the
-[OpenWRT upgrade instructions](https://openwrt.org/toh/linksys/e8450#how_to_convert_to_ubi_layout).
-I will not duplicate these instructions, as the linked page contains everything that is needed to
-upgrade this router to OpenWRT.  It is also meant to be done only once per device, and
-mine has been done the first time for many years, and again to upgrade to **24.10**....
-
-I've also documented the changes I've made to my OpenWrt installation, and this series
-is meant to reflect the documentation I've made.
-
-## The Expected Destination
-
-By the end of this series, we will have customized our installation of
-[OpenWRT 25.12.5](https://downloads.openwrt.org/releases/25.12.5/targets/mediatek/mt7622/)
-for this router, then created and flashed our custom firmware to flash to it.  This will
-enable us to reset to our defaults easily (as opposed to the unmodified firmware defaults),
-in the event we screw something up royally (which I've done **WAY** too many times)...
 
 # Let's Get Started
 

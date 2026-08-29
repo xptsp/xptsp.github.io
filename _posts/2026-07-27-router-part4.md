@@ -105,16 +105,6 @@ This is only necessary for the absolute first time getting the SSL certificate, 
 /usr/lib/acme/client/acme.sh --ecc -d ${DOMAIN} -d *.${DOMAIN} --keylength ec-256 --accountemail ${EMAIL} --server letsencrypt --dns dns_dynu --issue --home /etc/acme
 ```
 
-Lastly, we need to create two hooks that execute when the certificate is updated.
-The first hook reloads the NGINX configuration, while the second hook restarts AGH.
-```shell
-echo "[ \"\${ACTION}\" = \"renewed\" ] && service adguardhome restart" > /etc/hotplug.d/acme/00-adguardhome
-echo "[ \"\${ACTION}\" = \"renewed\" ] && service nginx reload" > /etc/hotplug.d/acme/00-nginx
-chmod +x /etc/hotplug.d/acme/*
-echo "/etc/hotplug.d/acme/00-adguardhome" >> /etc/sysupgrade.conf
-echo "/etc/hotplug.d/acme/00-nginx" >> /etc/sysupgrade.conf
-```
-
 ----
 
 ## Replace UHTTPD with NGINX

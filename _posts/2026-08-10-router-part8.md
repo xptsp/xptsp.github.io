@@ -61,11 +61,10 @@ sed -i "s|443 ssl|8443 ssl proxy_protocol|g" /etc/config/nginx
 
 We need to add a new configuration file under ```/etc/nginx/conf.d```:
 ```shell
-FILE=/etc/nginx/conf.d/stream.conf
+FILE=/etc/nginx/conf.d/misc.conf
 cat << EOF > ${FILE}
 set_real_ip_from  127.0.0.1;
 real_ip_header    proxy_protocol;
-server_names_hash_bucket_size 128;
 EOF
 echo ${FILE} >> /etc/sysupgrade.conf
 ```
@@ -81,28 +80,42 @@ don't feel like buying a domain name at this point.... :p
 Let's add the stream block to ```/etc/nginx/uci.conf.template``` to handle the multiplexing,
 then restart NGINX to make the magic work:
 ```shell
+mkdir -p /etc/nginx/stream.d
 cat << EOF >> /etc/nginx/uci.conf.template
 stream {
 	ssl_preread on;
 	map_hash_bucket_size 128;
 
-	map \$ssl_preread_protocol \$upstream_backend {
-		"TLSv1.0"       127.0.0.1:8443;
-		"TLSv1.1"       127.0.0.1:8443;
-		"TLSv1.2"       127.0.0.1:8443;
-		"TLSv1.3"       127.0.0.1:8443;
-		default         127.0.0.1:8022;
+	upstream ssh {
+		server 127.0.0.1:8022;
 	}
+	upstream sni_default {
+		server 127.0.0.1:8443;
+	}
+	upstream sni_blank {
+		server 127.0.0.1:8443; # <= Change to block handling OpenVPN
+	}
+
+	map \$ssl_preread_protocol \$upstream_backend {
+		""        ssh;
+		default   \$host;
+	}
+	map \$ssl_preread_server_name \$host {
+		""        sni_blank;
+		default   sni_default;
+	}
+
 	server {
 		listen 443;
 		proxy_protocol on;
 		proxy_pass \$upstream_backend;
 	}
-	server {
+	server {  # Block handling hand-off to SSH
 		listen 127.0.0.1:8022 proxy_protocol;
 		proxy_pass 192.168.3.1:22;
-		proxy_protocol off;  # << DO NOT CHANGE!  Breaks SSH if you do! >>
+		proxy_protocol off;  # << DO NOT REMOVE!  Breaks SSH if you do! >>
 	}
+	include stream.d/*.conf;
 }
 EOF
 service nginx restart
@@ -127,7 +140,48 @@ service firewall restart
 
 ----
 
+## What The Stream Block Does
+
+### <u>Upstream definitions</u>
+- ```upstream ssh``` points to our passwordless SSH server at **127.0.0.1:8022**.
+- ```upstream sni_default``` points to our alternative port HTTPS stack on **port 8443**.
+- ```upstream sni_blank``` also points to our alternative port HTTPS stack on **port 8443**.
+
+### <u>Map blocks</u>
+- First map contains protocol detection.  No protocol detected gets directed to ```upstream ssh```.
+Everything else gets sent to the second map.  
+
+- Second map contains routing for proxy server destination based on SNI (Server Name Indication).
+No SNI means it gets directed to ```upstream sni_blank```.  Everything else gets pointed to 
+```upstream sni_default```.
+
+### <u>Server blocks</u>
+- First block listens to **port 443**, passing control to the specified proxy server. Note
+that ``proxy_protocol on`` is set, preserving client IP address for the receiving server.
+
+- Second block listens to **127.0.0.1 port 8022** with ```proxy_protocol off```, which **DOES NOT**
+pass the client IP address to the proxy server, enabling SSH to work properly.  It proxies to 
+**192.168.3.1:22**, which is the passwordless SSH server we set up earlier in this post.
+
+----
+
 ## <u>Special Notes</u>
+
+- OpenVPN should be able to be added by adding a new server block with a new port number
+(aka ```127.0.0.1:8194```), like so:
+```
+	server {
+		listen 127.0.0.1:8194 proxy_protocol;
+		proxy_pass 127.0.0.1:1194;
+		proxy_protocol off;  # << DO NOT CHANGE!  Breaks OpenVPN if you do! >>
+	}
+```
+Also, ```upstream sni_blank``` must be changed to point to the IP/port of your new server block, like so:
+```
+	upstream sni_blank {
+		server 127.0.0.1:8194;	# OpenVPN server
+	}
+```
 
 - Hostnames are not recommended to be used within the ```stream``` block.  Some of the articles
 that I've read seem to indicate that NGNIX doesn't resolve hostnames inside the ```stream``` block.  I
@@ -147,8 +201,10 @@ We've successfully set up our HTTPS port (port 443) multiplexer, enabling SSH an
 OpenVPN to communcate on TCP port 443 alongside normal HTTPS traffic.  
 
 Because we are preserving the client IP address on HTTPS communcation, all HTTPS communcation 
-(if not modified) with the router domain name generates a 403 error code when accessed from 
-outside our network, thus protecting our router setup from outside interference. 
+(if not modified) with the router domain name generates a 403 error, disguised config-wise as a 404 
+error, when accessed from outside our network, thus (hopefully) protecting our router setup from 
+outside interference.  We are trying to hide the fact that something exists at this domain 
+name, after all.... 
 
 SSH from the internet is protected by cryptographic public-private key pairs and does not
 accept passwords, while leaving the in-network SSH able to log in using passwords.

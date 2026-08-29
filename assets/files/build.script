@@ -1,0 +1,56 @@
+#!/bin/bash
+
+#==============================================================================================
+# Create our symbolic link:
+test -e image || ln -sf build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/tmp image
+
+#==============================================================================================
+# Make sure the XPtsp repo is present:
+#grep -q openwrt-repo repositories.conf || echo "src/gz xptsp https://xptsp.github.io/openwrt-repo" >> repositories.conf
+#test -e keys/3cbcafe52ad71bae || wget http://xptsp.github.io/openwrt-repo/openWrtUsign.pub -O keys/3cbcafe52ad71bae
+
+#==============================================================================================
+# Get current configuration from router:
+ssh root@openwrt.lan sysupgrade -b /tmp/backup.tgz
+ssh root@openwrt.lan cat /tmp/backup.tgz > /tmp/backup.tgz
+ssh root@openwrt.lan rm /tmp/backup.tgz
+rm -rf files
+mkdir files
+cd files
+tar xf /tmp/backup.tgz
+chmod 0700 etc/dropbear
+cd ..
+cp -aR files_overwrite/* files/
+
+#==============================================================================================
+# Remove previous build logs
+rm log_*.txt 2> /dev/null
+
+#==============================================================================================
+# Get list of installed packages for our OpenWrt Image:
+PKGS=($(ssh root@openwrt.lan 'apk list -q --installed | cut -d" " -f 1'))
+PKGS="${PKGS[@]}"
+
+#==============================================================================================
+# Make sure known conflicting packages are not installed in the image:
+for EXCLUDE in dnsmasq uhttpd $(grep -R DEFAULT_PACKAGES target/linux/mediatek/mt7622/target.mk | grep -oe wpad-[a-z\-]*); do
+	[[ "${PKGS}" =~ \ ${EXCLUDE}\  ]] || PKGS="${PKGS} -${EXCLUDE}"
+done
+
+#==============================================================================================
+# Build the OpenWrt Image:
+mkdir -p build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/tmp
+touch build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/tmp/.hidden
+make -B image PROFILE="linksys_e8450-ubi" PACKAGES="${PKGS}" FILES="files" || exit 1
+
+#==============================================================================================
+# Move built OpenWrt images to "/image":
+rm -rf image
+mv build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/tmp image
+
+#==============================================================================================
+# Commit built OpenWrt image:
+exit
+git add .
+git commit -m "Image Build: $(date +"%Y-%m-%d %H:%M")"
+git push -u origin main
