@@ -1,6 +1,6 @@
 ---
 title: My Router - Part 8
-description: Accessing SSH from Internet over HTTPS Port
+description: Accessing Services from Internet over HTTPS Port
 date: 2026-08-10 0:00:00 -0600
 categories: [Router]
 tags: [Router]
@@ -61,7 +61,7 @@ sed -i "s|443 ssl|8443 ssl proxy_protocol|g" /etc/config/nginx
 
 We need to add a new configuration file under ```/etc/nginx/conf.d```:
 ```shell
-FILE=/etc/nginx/conf.d/misc.conf
+FILE=/etc/nginx/conf.d/proxy_protocol.conf
 cat << EOF > ${FILE}
 set_real_ip_from  127.0.0.1;
 real_ip_header    proxy_protocol;
@@ -216,4 +216,3 @@ accept passwords, while leaving the in-network SSH able to log in using password
 - [Using Nginx Stream Directive to Host SSH and Multiple HTTPS Servers On the Same Port](https://blog.thewalr.us/2019/04/05/using-nginx-stream-directive-to-host-ssh-and-multiple-https-servers-on-the-same-port/)
 - [Can nginx serve SSH and HTTP(S) at the same time on the same port?](https://superuser.com/questions/1135208/can-nginx-serve-ssh-and-https-at-the-same-time-on-the-same-port/1328474#1328474)
 - [Nginx stream - proxying OpenVPN](https://forum.opnsense.org/index.php?msg=113546)
-- [Nginx TLS SNI routing, based on subdomain pattern](https://gist.github.com/kekru/c09dbab5e78bf76402966b13fa72b9d2)

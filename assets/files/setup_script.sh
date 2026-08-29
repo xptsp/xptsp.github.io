@@ -435,43 +435,6 @@ service acme restart
 # fails on first run for some reason:
 /usr/lib/acme/client/acme.sh --ecc -d ${DOMAIN} -d *.${DOMAIN} --keylength ec-256 --accountemail ${EMAIL} --server letsencrypt --dns dns_dynu --issue --home /etc/acme
 
-# Create hooks that get executed when SSL is updated:
-echo "[ \"\${ACTION}\" = \"renewed\" ] && service adguardhome restart" > /etc/hotplug.d/acme/00-adguardhome
-echo "[ \"\${ACTION}\" = \"renewed\" ] && service nginx reload" > /etc/hotplug.d/acme/00-nginx
-chmod +x /etc/hotplug.d/acme/*
-echo "/etc/hotplug.d/acme/00-adguardhome" >> /etc/sysupgrade.conf
-echo "/etc/hotplug.d/acme/00-nginx" >> /etc/sysupgrade.conf
-
-#####################################################################################
-# AdGuardHome using SSL certificate
-#####################################################################################
-# Add directory to AGH jail mounts and change ownership and permissions:
-chown root:adguardhome /etc/acme/*/*.key
-chmod 640 /etc/acme/*/*.key
-uci add_list adguardhome.config.jail_mount='/etc/acme/'${DOMAIN}'_ecc/'
-uci commit
-
-# Modify AGH to use the SSL certificate, then restart AGH:
-FILE=/etc/adguardhome/adguardhome.yaml
-sed -i "s|server_name: .*|server_name: ${DOMAIN}|g" ${FILE}
-sed -i "s|certificate_path: .*|certificate_path: /etc/acme/${DOMAIN}_ecc/fullchain.cer|g" ${FILE}
-sed -i "s|private_key_path: .*|private_key_path: /etc/acme/${DOMAIN}_ecc/${DOMAIN}.key|g" ${FILE}
-sed -i "s|port_https: .*|port_https: 3001|g" ${FILE}
-sed -i '/^tls:/{n;s/.*/  enabled: true/}' ${FILE}
-service adguardhome restart
-
-# Allow DoT requests through the WAN firewall:
-uci -q del firewall.dot
-uci set firewall.dot="rule"
-uci set firewall.dot.family='any'
-uci set firewall.dot.name='Allow-DoT'
-uci set firewall.dot.src='wan'
-uci set firewall.dot.dest_port='853'
-uci set firewall.dot.proto='udp'
-uci set firewall.dot.target='ACCEPT'
-uci commit
-service firewall restart
-
 #####################################################################################
 # Replace UHTTPD with NGINX
 #####################################################################################
@@ -512,17 +475,18 @@ uci set nginx.https_router.ssl_session_timeout='64m'
 uci set nginx.https_router.access_log='off; # logd openwrt'
 
 # Define a HTTPS server serving Adguard Home:
-uci set nginx.https_webdav=server
-uci add_list nginx.https_webdav.listen='443 ssl'
-uci add_list nginx.https_webdav.listen='[::]:443 ssl'
-uci add_list nginx.https_webdav.include='restrict_locally'
-uci set nginx.https_webdav.server_name='webdav.'${DOMAIN}
-uci set nginx.https_webdav.ssl_certificate='/etc/acme/'${DOMAIN}'_ecc/'${DOMAIN}'.cer'
-uci set nginx.https_webdav.ssl_certificate_key='/etc/acme/'${DOMAIN}'_ecc/'${DOMAIN}'.key'
-uci set nginx.https_webdav.ssl_session_cache='shared:SSL:32k'
-uci set nginx.https_webdav.ssl_session_timeout='64m'
-uci set nginx.https_webdav.access_log='off; # logd openwrt'
-uci set nginx.https_webdav.location='/ { proxy_pass https://127.0.0.1:3001; } # webdav'
+uci set nginx.https_adguardhome=server
+uci add_list nginx.https_adguardhome.listen='443 ssl'
+uci add_list nginx.https_adguardhome.listen='[::]:443 ssl'
+uci add_list nginx.https_adguardhome.include='restrict_locally'
+uci add_list nginx.https_adguardhome.include='conf.d/error_403.locations'
+uci set nginx.https_adguardhome.server_name='adguardhome.'${DOMAIN}
+uci set nginx.https_adguardhome.ssl_certificate='/etc/acme/'${DOMAIN}'_ecc/'${DOMAIN}'.cer'
+uci set nginx.https_adguardhome.ssl_certificate_key='/etc/acme/'${DOMAIN}'_ecc/'${DOMAIN}'.key'
+uci set nginx.https_adguardhome.ssl_session_cache='shared:SSL:32k'
+uci set nginx.https_adguardhome.ssl_session_timeout='64m'
+uci set nginx.https_adguardhome.access_log='off; # logd openwrt'
+uci set nginx.https_adguardhome.location='/ { proxy_pass http://127.0.0.1:3000; } # adguardhome'
 
 # Define an default HTTP server that redirects HTTP requests to HTTPS:
 uci set nginx.http_default=server
@@ -540,42 +504,11 @@ uci set nginx.http_router.server_name='openwrt.lan openwrt.local openwrt'
 uci set nginx.http_router.return='302 https://router.'${DOMAIN}'$request_uri'
 
 # Patch the nginx template so that long domain names are handled properly:
-FILE=/etc/nginx/uci.conf.template
-grep -q server_names_hash_bucket_size ${FILE} || sed -i "s|client_max_body_size 128M;|client_max_body_size 128M;\n        server_names_hash_bucket_size 128;|g" ${FILE}
+FILE=/etc/nginx/conf.d/server_names_hash_bucket_size.conf
+echo "server_names_hash_bucket_size 128;" > ${FILE}
 echo "${FILE}" >> /etc/sysupgrade.conf
 
 # Commit our changes and restart NGINX:
-uci commit
-service nginx restart
-
-#####################################################################################
-# Set up access to the Linksys CM3008 Cable Modem:
-#####################################################################################
-uci -q del network.modem
-uci set network.modem="interface"
-uci set network.modem.proto="static"
-uci set network.modem.device="@wan"
-uci set network.modem.ipaddr="192.168.100.2"
-uci set network.modem.netmask="255.255.255.0"
-uci commit network
-service network restart
-
-uci del_list firewall.@zone[1].network="modem"
-uci add_list firewall.@zone[1].network="modem"
-uci commit firewall
-service firewall restart
-
-# Create a new HTTPS server definition for the cable modem:
-uci set nginx.https_modem=server
-uci set nginx.https_modem.listen='443 ssl' '[::]:443 ssl'
-uci set nginx.https_modem.include='restrict_locally'
-uci set nginx.https_modem.server_name='modem.almostparadise.freeddns.org'
-uci set nginx.https_modem.ssl_certificate='/etc/acme/almostparadise.freeddns.org_ecc/almostparadise.freeddns.org.cer'
-uci set nginx.https_modem.ssl_certificate_key='/etc/acme/almostparadise.freeddns.org_ecc/almostparadise.freeddns.org.key'
-uci set nginx.https_modem.ssl_session_cache='shared:SSL:32k'
-uci set nginx.https_modem.ssl_session_timeout='64m'
-uci set nginx.https_modem.access_log='off; # logd openwrt'
-uci set nginx.https_modem.location='/ { proxy_pass https://192.168.100.1; } # Cable Modem'
 uci commit
 service nginx restart
 
@@ -585,8 +518,9 @@ service nginx restart
 apk add nginx-mod-dav-ext
 
 # Once again, UCI configuration must be patched for lock zone definition:
-FILE=/etc/nginx/uci.conf.template
-grep -q dav_ext_lock_zone ${FILE} || sed -i "s|client_max_body_size 128M;|dav_ext_lock_zone zone=dav_locks:10m;\n        client_max_body_size 128M;|g" ${FILE}
+FILE=/etc/nginx/conf.d/dav_ext_lock_zone.conf
+echo "dav_ext_lock_zone zone=dav_locks:10m;" > ${FILE}
+echo "${FILE}" >> /etc/sysupgrade.conf
 
 # Create our WebDAV server on port 8080:
 FILE=/etc/nginx/conf.d/pxeboot.conf
@@ -628,6 +562,7 @@ uci set nginx.https_webdav=server
 uci add_list nginx.https_webdav.listen='443 ssl'
 uci add_list nginx.https_webdav.listen='[::]:443 ssl'
 uci add_list nginx.https_webdav.include='restrict_locally'
+uci add_list nginx.https_webdav.include='conf.d/error_403.locations'
 uci set nginx.https_webdav.server_name='webdav.'${DOMAIN}
 uci set nginx.https_webdav.ssl_certificate='/etc/acme/'${DOMAIN}'_ecc/'${DOMAIN}'.cer'
 uci set nginx.https_webdav.ssl_certificate_key='/etc/acme/'${DOMAIN}'_ecc/'${DOMAIN}'.key'
@@ -639,6 +574,26 @@ uci set nginx.https_webdav.location='/ { proxy_pass http://127.0.0.1:8080; } # W
 # Commit changes and restart service:
 uci commit
 service nginx restart
+
+#####################################################################################
+# Adding a 403 error handler to NGINX
+#####################################################################################
+# Download the error page template
+FILE=/www/error_403.html
+wget https://xptsp.github.io/assets/files/error_403.template -O ${FILE}
+echo ${FILE} >> /etc/sysupgrade.conf
+
+# Create a nginx configuration file for 403 errors:
+FILE=/etc/nginx/conf.d/error_403.locations
+cat << EOF > ${FILE}
+error_page 403 =404 /error_403.html;
+location = /error_403.html {
+	root /www;
+	allow all;
+	internal;
+}
+EOF
+echo ${FILE} >> /etc/sysupgrade.conf
 
 #************************************************************************************
 #******************************* ROUTER SERIES: PART 5 ******************************
