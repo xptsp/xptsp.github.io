@@ -124,6 +124,25 @@ uci set nginx.global=main
 uci set nginx.global.uci_enable='true'
 ```
 
+We'll define an default HTTP server that redirects HTTP requests to HTTPS:
+```shell
+uci set nginx.http_default=server
+uci add_list nginx.http_default.listen='80 default_server'
+uci add_list nginx.http_default.listen='[::]:80 default_server'
+uci set nginx.http_default.server_name='_redirect2ssl'
+uci set nginx.http_default.return='302 https://$host$request_uri'
+```
+
+We'll define an HTTP server that redirects ```http://openwrt/```, ```http://openwrt.lan```, and
+```http://openwrt.local``` to ```https://router.example.com```:
+```shell
+uci set nginx.http_router=server
+uci add_list nginx.http_router.listen='80'
+uci add_list nginx.http_router.listen='[::]:80'
+uci set nginx.http_router.server_name='openwrt.lan openwrt.local openwrt'
+uci set nginx.http_router.return='302 https://router.'${DOMAIN}'$request_uri'
+```
+
 Default HTTPS redirects HTTPS requests to ```https://router.example.com```:
 ```shell
 uci set nginx.https_default=server
@@ -172,28 +191,9 @@ uci set nginx.https_adguardhome.access_log='off; # logd openwrt'
 uci set nginx.https_adguardhome.location='/ { proxy_pass http://127.0.0.1:3000; } # adguardhome'
 ```
 
-We'll define an default HTTP server that redirects HTTP requests to HTTPS:
-```shell
-uci set nginx.http_default=server
-uci add_list nginx.http_default.listen='80 default_server'
-uci add_list nginx.http_default.listen='[::]:80 default_server'
-uci set nginx.http_default.server_name='_redirect2ssl'
-uci set nginx.http_default.return='302 https://$host$request_uri'
-```
-
-We'll define an HTTP server that redirects ```http://openwrt/```, ```http://openwrt.lan```, and
-```http://openwrt.local``` to ```https://router.example.com```:
-```shell
-uci set nginx.http_router=server
-uci add_list nginx.http_router.listen='80'
-uci add_list nginx.http_router.listen='[::]:80'
-uci set nginx.http_router.server_name='openwrt.lan openwrt.local openwrt'
-uci set nginx.http_router.return='302 https://router.'${DOMAIN}'$request_uri'
-```
-
 I needed to add a line to the nginx configuration so that long domain names are handled properly:
 ```shell
-FILE=/etc/nginx/conf.d/server_names_hash_bucket_size.conf
+FILE=/etc/nginx/conf.d/cfg:server_names_hash_bucket_size.conf
 echo "server_names_hash_bucket_size 128;" > ${FILE}
 echo "${FILE}" >> /etc/sysupgrade.conf
 ```
@@ -219,7 +219,7 @@ apk add nginx-mod-dav-ext
 
 I needed to add a line to the nginx configuration so that long domain names are handled properly --AGAIN--:
 ```shell
-FILE=/etc/nginx/conf.d/dav_ext_lock_zone.conf
+FILE=/etc/nginx/conf.d/cfg:dav_ext_lock_zone.conf
 echo "dav_ext_lock_zone zone=dav_locks:10m;" > ${FILE}
 echo "${FILE}" >> /etc/sysupgrade.conf
 ```
@@ -227,41 +227,34 @@ echo "${FILE}" >> /etc/sysupgrade.conf
 Let's create our WebDAV server on port 8080, customizing the output so it looks
 better using css and js from [https://github.com/julcap/nginx-style-autoindex](https://github.com/julcap/nginx-style-autoindex):
 ```shell
-FILE=/etc/nginx/conf.d/pxeboot.conf
-cat << EOF > ${FILE}
-server {
-	listen 8080 default_server;
-	listen [::]:8080 default_server;
-	include restrict_locally;
-	server_name _;
-	sub_filter '</head>' '<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><link rel="stylesheet" href="/autoindex.css"></head>';
-	sub_filter '</body>' '<script src="/autoindex.js"></script></body>';
-	sub_filter_once on;
-	autoindex on;
-	location / {
-		root /mnt/pxeboot/disks;
-		dav_methods PUT DELETE MKCOL COPY MOVE;
-		dav_ext_methods PROPFIND OPTIONS LOCK UNLOCK;
-		dav_access user:rw group:rw all:r;
-		dav_ext_lock zone=dav_locks;
-		client_max_body_size 0;
-		create_full_put_path on;
-	}
-	location ~ /autoindex.(css|js) {
-		root /mnt/pxeboot;
-	}
-}
-EOF
-echo "${FILE}" >> /etc/sysupgrade.conf
+uci set nginx.http_webdav=server
+uci add_list nginx.http_webdav.listen '8080 default_server'
+uci add_list nginx.http_webdav.listen '[::]:8080 default_server'
+uci add_list nginx.http_webdav.include 'restrict_locally'
+uci set nginx.http_webdav.server_name '_'
+uci set nginx.http_webdav.sub_filter_once 'on'
+uci set nginx.http_webdav.autoindex 'on'
+uci add_list nginx.http_webdav.location '/ { root /mnt/pxeboot/disks; dav_methods PUT DELETE MKCOL COPY MOVE; dav_ext_methods PROPFIND OPTIONS LOCK UNLOCK; dav_access user:rw group:rw all:r; dav_ext_lock zone=dav_locks; client_max_body_size 0; create_full_put_path on; } # WebDAV'
+uci add_list nginx.http_webdav.location '~ /autoindex.(css|js) { root /mnt/pxeboot; } # WebDAV'
+uci commit
 ```
 
-Without the ```sub_filter``` lines in the configuration, ```http://openwrt.lan:8080``` will
-look something like this:
+With this configuration, ```http://openwrt.lan:8080``` will look something like this:
 ![webdav_before.webp](/assets/img/router/webdav_before.webp){: lqip="data:image/webp;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAAOABgDAREAAhEBAxEB/8QAFwABAAMAAAAAAAAAAAAAAAAAAwIECf/EABsQAAICAwEAAAAAAAAAAAAAAAABAgMRElEh/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/ANPqaNceAXK4YAVR6Aca0gESSAlr0D//2Q=="}
 
 We need to download a few css and js files for this to work and add them to the
 sysupgrade file list:
 ```shell
+uci add_list nginx.http_webdav.include 'conf.d/webdav.include'
+uci commit
+
+FILE=/etc/nginx/conf.d/webdav.include
+cat << EOF > ${FILE}
+sub_filter '</head>' '<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><link rel="stylesheet" href="/autoindex.css"></head>';
+sub_filter '</body>' '<script src="/autoindex.js"></script></body>';
+EOF
+echo "${FILE}" >> /etc/sysupgrade.conf
+
 FILE=/mnt/pxeboot/autoindex.css
 wget https://xptsp.github.io/assets/files/autoindex.js -O "${FILE/css/js}"
 wget https://xptsp.github.io/assets/files/autoindex.css -O "${FILE}"
@@ -269,8 +262,7 @@ echo "${FILE}" >> /etc/sysupgrade.conf
 echo "${FILE/css/js}" >> /etc/sysupgrade.conf
 ```
 
-Making sure the ```sub_filter``` lines, as well as the css and js files are present, it
-will look like this:
+After the customization, ```http://openwrt.lan:8080``` will look something like this:
 ![webdav.webp](/assets/img/router/webdav.webp){: lqip="data:image/webp;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCAAOABgDAREAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAQIJ/8QAGBAAAwEBAAAAAAAAAAAAAAAAAAERAlH/xAAXAQEBAQEAAAAAAAAAAAAAAAABAAIG/8QAGBEBAQEBAQAAAAAAAAAAAAAAAAERIUH/2gAMAwEAAhEDEQA/ANFFmGXFrySI+mCLgIlowpUZDeP/2Q=="}
 
 Let's define a HTTPS service that serves our WebDAV server, and restart networking service.

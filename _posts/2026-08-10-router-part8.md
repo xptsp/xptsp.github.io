@@ -61,7 +61,7 @@ sed -i "s|443 ssl|8443 ssl proxy_protocol|g" /etc/config/nginx
 
 We need to add a new configuration file under ```/etc/nginx/conf.d```:
 ```shell
-FILE=/etc/nginx/conf.d/proxy_protocol.conf
+FILE=/etc/nginx/conf.d/cfg:proxy_protocol.conf
 cat << EOF > ${FILE}
 set_real_ip_from  127.0.0.1;
 real_ip_header    proxy_protocol;
@@ -69,9 +69,9 @@ EOF
 echo ${FILE} >> /etc/sysupgrade.conf
 ```
 
-The first 2 lines in ```/etc/nginx/conf.d/misc.conf``` allows NGINX to pull the client IP address
-from the calling stream block, while the last line allows me to use really long domain names.  I
-don't feel like buying a domain name at this point.... :p
+The first 2 lines in ```/etc/nginx/conf.d/cfg:proxy_protocol.conf``` allows NGINX to pull the 
+client IP address from the calling stream block, while the last line allows me to use really 
+long domain names.  I don't feel like buying a domain name at this point.... :p
 
 ---
 

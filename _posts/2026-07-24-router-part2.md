@@ -97,18 +97,6 @@ uci set firewall.dns_int.target='DNAT'
 uci set firewall.dns_int.dest_port='53'
 ```
 
-We also need to set up a firewall rule to block DNS-over-TLS (DoT - port 853).
-This is another way for devices to avoid using AGH.
-```shell
-uci set firewall.block_dot=rule
-uci set firewall.block_dot.name='Block DoT from LAN'
-uci set firewall.block_dot.src='lan'
-uci set firewall.block_dot.dest='wan'
-uci set firewall.block_dot.proto='tcp udp'
-uci set firewall.block_dot.dest_port='853'
-uci set firewall.block_dot.target='REJECT'
-```
-
 Now restart services so we can enjoy far less ads on our network!
 ```shell
 uci commit
