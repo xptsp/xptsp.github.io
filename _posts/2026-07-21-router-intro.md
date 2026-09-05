@@ -1,6 +1,6 @@
 ---
 title: My Router - Intro 
-description: The Router Image Builder
+description: Introduction and the Image Builder
 date: 2026-07-21 02:08:00 -0600
 categories: [Router]
 tags: [Router]
@@ -50,7 +50,7 @@ cd Builder
 Now that we are inside the image builder directory, we need to download the build script and
 make it executable:
 ```shell
-wget https://xptsp.github.io/assets/files/build.script -O build
+wget https://xptsp.github.io/assets/files/build.script_x86 -O build
 chmod +x build
 ```
 
@@ -142,3 +142,4 @@ LUCI Web UI, or by uploading it to the router and executing ```sysupgrade <IMAGE
 
 ## Summary
 
+We are ready to start customizing the "factory" OpenWRT image!  How exciting!  
