@@ -24,6 +24,7 @@ So let's add some essential services to our router!
 
 First, we need to add the XPtsp OpenWrt repo to the mix.
 ```shell
+echo "https://xptsp.github.io/openwrt-repo/apk/all/packages.adb" >> /etc/apk/repositories.d/xptsp.list
 echo "https://xptsp.github.io/openwrt-repo/apk/aarch64_cortex-a53/packages.adb" >> /etc/apk/repositories.d/xptsp.list
 wget http://xptsp.github.io/openwrt-repo/apk/aarch64_cortex-a53/xptsp.pem -O /etc/apk/keys/xptsp.pem
 ```
