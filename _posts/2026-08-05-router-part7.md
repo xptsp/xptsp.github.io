@@ -178,35 +178,10 @@ incoming Wireguard communication is going to come in on port 443, we need a prox
 to send it.  That's where MWGP comes into play.  MWGP generates its ```config.json``` from the wireguard
 configuration in ```/etc/config/network```.
 
-Unfortunately, I have had trouble creating an OpenWrt APK package for MWGP.  So instead, let's download
-the binary that I built:
+I have had trouble creating an OpenWrt APK package for MWGP in the past, but with the help of Google's
+AI, I finally succeeded at doing so!  Let's install the package now:
 ```shell
-wget https://xptsp.github.io/assets/files/mwgp.arm64 -O /usr/bin/mwgp
-```
-Or you can compile this program yourself for our router.  It'll probably have to be done on a host
-PC, since storage on the router is very constrainted.  We also have to transfer it to the router:
-```shell
-git clone https://github.com/apernet/mwgp /tmp/mwgp
-cd /tmp/mwgp
-CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -ldflags="-s -w" -trimpath -o mwgp ./cmd/mwgp
-scp mwgp root@openwrt.lan:/usr/bin/
-```
-
-I've written a init.d service for MWGP, which (by default) listens on **UDP port 1000**, which we're
-going to modify to listen on **UDP port 443**.  At this time, no MWRP configuration options are available
-within the init script.
-```shell
-FILE=/etc/init.d/mwgp
-wget https://raw.githubusercontent.com/xptsp/openwrt-mwgp/refs/heads/main/files/mwgp.init -O ${FILE}
-sed -i "s|1000|443|g" ${FILE}
-chmod +x ${FILE}
-echo ${FILE} >> /etc/sysupgrade.conf
-
-chmod +x /usr/bin/mwgp
-echo /usr/bin/mwgp >> /etc/sysupgrade.conf
-
-service mwgp enable
-service mwgp start
+apk add mwgp
 ```
 
 ----
