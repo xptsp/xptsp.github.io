@@ -2,29 +2,45 @@
 
 #==============================================================================================
 # Create our symbolic link:
-test -e image || ln -sf build_dir/target-aarch64_cortex-a53_musl/linux-mediatek_mt7622/tmp image
+test -e image || ln -sf build_dir/target-x86_64_musl/linux-x86_64/tmp image
 
 #==============================================================================================
 # Make sure the XPtsp repo is present:
-grep -q openwrt-repo repositories.conf || echo "src/gz xptsp https://xptsp.github.io/openwrt-repo" >> repositories.conf
-test -e keys/3cbcafe52ad71bae || wget http://xptsp.github.io/openwrt-repo/openWrtUsign.pub -O keys/3cbcafe52ad71bae
+if ! grep -q xptsp.github.io repositories; then
+	echo "https://xptsp.github.io/openwrt-repo/apk/all/packages.adb" >> repositories
+	echo "https://xptsp.github.io/openwrt-repo/apk/x86_64/packages.adb" >> repositories
+fi
+test -f /etc/apk/keys/xptsp.pem && wget http://xptsp.github.io/openwrt-repo/apk/xptsp.pem -O keys/xptsp.pem
+
+#==============================================================================================
+# Update configuration if needed:
+grep -q CONFIG_TARGET_ROOTFS_EXT4FS=y .config && sed -i "s|CONFIG_TARGET_ROOTFS_EXT4FS=y|CONFIG_TARGET_ROOTFS_EXT4FS=n|g" .config
+grep -q CONFIG_GRUB_TITLE=\"OpenWrt\" .config && sed -i "s|CONFIG_GRUB_TITLE=\"OpenWrt\"|CONFIG_GRUB_TITLE=\"HomeLab\"|g" .config
+grep -q CONFIG_GRUB_TIMEOUT=\"5\" .config && sed -i "s|CONFIG_GRUB_TIMEOUT=\"5\"|CONFIG_GRUB_TIMEOUT=\"1\"|g" .config
+grep -q CONFIG_GRUB_BOOTOPTS=\"\" .config && sed -i "s|CONFIG_GRUB_BOOTOPTS=\"\"|CONFIG_GRUB_BOOTOPTS=\"quiet\"|g" .config
+grep -q CONFIG_TARGET_ROOTFS_PARTSIZE=104 .config && sed -i "CONFIG_TARGET_ROOTFS_PARTSIZE=104|CONFIG_TARGET_ROOTFS_PARTSIZE=512|g" .config
 
 #==============================================================================================
 # Get current configuration from router:
-ssh root@homelab.lan sysupgrade -b /tmp/backup.tgz
-ssh root@ cat /tmp/backup.tgz > /tmp/backup.tgz
-ssh root@ rm /tmp/backup.tgz
+ssh root@tester.lan sysupgrade -b /tmp/backup.tgz
+ssh root@tester.lan cat /tmp/backup.tgz > /tmp/backup.tgz
+ssh root@tester.lan rm /tmp/backup.tgz
 rm -rf files
 mkdir files
 cd files
 tar xf /tmp/backup.tgz
 chmod 0700 etc/dropbear
 cd ..
-cp -aR files_overwrite/* files/ 2> /dev/null
+cp -aR files_overwrite/* files/
+sed -i "s|option hostname .*|option hostname \'HomeLab\'|g" files/etc/config/system
+
+#==============================================================================================
+# Remove previous build logs
+rm log_*.txt 2> /dev/null
 
 #==============================================================================================
 # Get list of installed packages for our OpenWrt Image:
-PKGS=($(ssh root@ 'opkg list-installed | cut -d" " -f 1'))
+PKGS=($(ssh root@tester.lan 'apk list -q --installed | cut -d" " -f 1'))
 PKGS="${PKGS[@]}"
 
 #==============================================================================================
@@ -37,7 +53,7 @@ done
 # Build the OpenWrt Image:
 mkdir -p build_dir/target-x86_64_musl/linux-x86_64/tmp
 touch build_dir/target-x86_64_musl/linux-x86_64/tmp/.hidden
-make -B image PROFILE="generic" PACKAGES="${PKGS}" DISABLED_SERVICES="dropbear dnsmasq" FILES="files" || exit 1
+make -B image PROFILE="generic" PACKAGES="${PKGS} luci-app-dockerman" FILES="files" || exit 1
 
 #==============================================================================================
 # Move built OpenWrt images to "/image":
@@ -46,7 +62,6 @@ mv build_dir/target-x86_64_musl/linux-x86_64/tmp image
 
 #==============================================================================================
 # Commit built OpenWrt image:
-exit
 git add .
 git commit -m "Image Build: $(date +"%Y-%m-%d %H:%M")"
 git push -u origin main
